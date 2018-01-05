@@ -1,0 +1,26 @@
+{
+  "name": "custom-elements",
+  "description": "A cross-browser polyfill for the Custom Elements portion of the W3C Web Components specification.",
+  "version": "1.0.3",
+  "keywords": [
+    "html",
+    "web",
+    "components",
+    "custom",
+    "element"
+  ],
+  "main": [
+    "./dist/CustomElements.min.js",
+    "./dist/CustomElements.min.js"
+  ],
+  "homepage": "https://github.com/oliver-moran/custom-elements",
+  "_release": "1.0.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.3",
+    "commit": "bdc21520a8efbf891f952db26fef6ffa8fcd773e"
+  },
+  "_source": "https://github.com/oliver-moran/custom-elements.git",
+  "_target": "*",
+  "_originalSource": "custom-elements"
+}

@@ -1,0 +1,60 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-card/paper-card.html">
+
+
+
+<dom-module id="person-card">
+    <template>
+        <style is="custom-style">
+
+        </style>
+        <content>
+            <paper-card class="custom-card">
+                <div>
+                    <paper-card heading="Profile Picture" image="http://placehold.it/350x150/FFC107/000000" alt="Profile Picture"></paper-card>
+                </div>
+                <div>
+                    <iron-icon icon="account-circle" slot="prefix"></iron-icon>
+                    <paper-card class="cyan">
+                        [[lastname]], [[firstname]]
+                    </paper-card>
+                </div>
+                <div>
+                    <iron-icon icon="social:domain" slot="prefix"></iron-icon>
+                    <paper-card class="cyan">
+                        [[university]]
+                    </paper-card>
+                </div>
+                <div>
+                    <iron-icon icon="social:school" slot="prefix"></iron-icon>
+                    <paper-card class="cyan">
+                        [[major]]
+                    </paper-card>
+                </div>
+                <div>
+                    <iron-icon icon="book" slot="prefix"></iron-icon>
+                    <paper-card class="cyan">
+                        [[gpa]]
+                    </paper-card>
+                </div>
+            </paper-card>
+        </content>
+    </template>
+    <script>
+        Polymer({
+            is: 'person-card',
+            properties:{
+                firstname: String,
+                lastname: String,
+                university: String,
+                major: String,
+                gpa: String,
+            },
+            ready: function(){
+
+            },
+
+        });
+    </script>
+</dom-module>
+

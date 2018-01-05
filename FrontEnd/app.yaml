@@ -1,0 +1,24 @@
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+  - url: /
+    static_files: index.html
+    upload: index.html, collabarter-main.json
+
+  - url: /html
+    static_dir: html
+
+  - url: /index\.html
+    static_files: index.html
+    upload: index.html
+
+  - url: /bower_components
+    static_dir: bower_components
+
+  - url: /css
+    static_dir: css
+
+  - url: /images
+    static_dir: images

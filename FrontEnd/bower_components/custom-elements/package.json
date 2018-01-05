@@ -1,0 +1,26 @@
+{
+  "name": "custom-elements",
+  "description": "A cross-browser polyfill for the Custom Elements portion of the W3C Web Components specification.",
+  "version": "1.0.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oliver-moran/custom-elements.git"
+  },
+  "licenses" : [
+    {
+      "type": "Mozilla Public License",
+      "url": "http://mozilla.org/MPL/2.0/"
+    },
+    {
+      "type": "BSD-style license",
+      "url": "https://raw.github.com/oliver-moran/custom-elements/master/src/LICENSE"
+    }
+  ],
+  "keywords": [
+  	"html",
+    "web",
+    "components",
+    "custom",
+    "element"
+  ]
+}

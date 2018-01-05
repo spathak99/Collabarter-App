@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<title>Custom Elements Polyfill Demo (Lotto)</title>
+		<meta charset="utf-8" />
+
+		<script type="text/javascript" src="../dist/MutationObserver.min.js"></script>
+	 	<script type="text/javascript" src="../dist/CustomElements.min.js"></script>
+
+		<script type="text/javascript">
+
+		// create the x-lotto prototype
+		var XLottoPrototype = Object.create(HTMLElement.prototype);
+		XLottoPrototype.createdCallback = pickResults;
+		XLottoPrototype.attributeChangedCallback = pickResults;
+
+		// register the x-lotto element with the document
+		var XLotto = document.register('x-lotto', {
+			prototype: XLottoPrototype
+		});
+
+		/*
+		 * A method to populate an x-lotto element
+		 */
+		function pickResults() {
+			// 'this' is the Custom Element (x-lotto)
+
+			// clear everything (just in case)
+			while (this.firstChild) {
+    			this.removeChild(this.firstChild);
+			}
+
+			// get the attribtues of this x-lotto element
+			var min = parseInt(this.getAttribute("min"));
+			var max = parseInt(this.getAttribute("max"));
+			var pick = parseInt(this.getAttribute("pick"));
+
+			// create an array of lotto balls
+			var balls = [];
+			for (var i=min; i<=max; i++) {
+				balls.push(i);
+			}
+
+			// draw balls for the result
+			var result = [];
+			for (var i=0; i<pick; i++) {
+				var rnd = Math.floor(Math.random() * (balls.length - 1));
+				result = result.concat(balls.splice(rnd, 1));
+			}
+
+			var html = "";
+			// generate the output for the inner HTML of the x-lotto element
+			for (var i=0; i<result.length; i++) {
+				html += result[i];
+				if (i < result.length - 1) html += " ";
+			}
+
+			// update the x-lotto innerHTML
+			this.innerHTML = html;
+
+		}
+
+		</script>
+
+	</head>
+	
+	<body>
+
+	<p>
+		A custom element generating lotto numbers:
+		<x-lotto min="1" max="45" pick="6"></x-lotto>
+	</p>
+
+	<!--
+	<script type="text/javascript">
+	// Dynamically adds an x-lotto tag to the document body
+	var lotto = document.createElement("x-lotto");
+	lotto.setAttribute('min', 1);
+	lotto.setAttribute('max', 45);
+	lotto.setAttribute('pick', 6);
+	document.body.appendChild(lotto);
+	</script>
+	-->
+
+	</body>
+
+</html>

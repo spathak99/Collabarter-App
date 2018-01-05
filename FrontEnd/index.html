@@ -1,0 +1,296 @@
+<html>
+<head>
+    <meta name="google-site-verification" content="AIzaSyAFavHd8cwMhBp07PIkX8cz2HP0SNRGw98" />
+    <meta charset="utf-8">
+    <meta name="description" content="">
+
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="bower_components/app-layout/app-layout.html">
+
+    <link rel="import" href="bower_components/iron-pages/iron-pages.html">
+
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="bower_components/iron-image/iron-image.html">
+    <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="bower_components/iron-list/iron-list.html">
+    <link rel="import" href="bower_components/iron-icons/communication-icons.html">
+    <link rel="import" href="bower_components/iron-icons/social-icons.html">
+
+    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html">
+    <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="bower_components/paper-input/paper-input.html">
+    <link rel="import" href="bower_components/paper-button/paper-button.html">
+
+    <link rel="import" href="bower_components/google-signin/google-signin.html">
+    <link rel="import" href="person-card.html">
+
+    <link rel="stylesheet" href="css/style.css">
+
+<!--    <link rel="import" href="html/team-scorecard.html">-->
+</head>
+<body unresolved>
+    <collabarter-main></collabarter-main>
+</body>
+<dom-module id="collabarter-main">
+    <template>
+        <custom-style>
+            <style is="custom-style">
+    html, body {
+      margin: 0;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: #f1f1f1;
+      max-height: 368px;
+    }
+    app-toolbar {
+      background-color: #4285f4;
+      color: #fff;
+    }
+
+    paper-icon-button {
+      --paper-icon-button-ink-color: red;
+    }
+
+    paper-icon-button + [main-title] {
+      margin-left: 24px;
+    }
+    paper-progress {
+      display: block;
+      width: 100%;
+      --paper-progress-active-color: rgba(255, 255, 255, 0.5);
+      --paper-progress-container-color: transparent;
+    }
+    app-header {
+      @apply --layout-fixed-top;
+      color: #fff;
+      --app-header-background-rear-layer: {
+        background-color: #ef6c00;
+      };
+    }
+    app-drawer {
+      --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);
+      --app-drawer-content-container: {
+        background-color: #B0BEC5;
+      }
+    }
+    sample-content {
+      padding-top: 64px;
+    }
+  </style>
+        </custom-style>
+        <app-header-layout>
+            hello world3
+            <app-header>
+            <app-toolbar>
+                <google-signin
+                        id="signin"
+                        client-id= "227003617958-rvku7g2t4pjebmpgt1522b6h3lu1d4mt.apps.googleusercontent.com"
+                        on-google-signin-success="handleSignIn"
+                        on-google-signed-out="handleSignedOut"
+                        scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
+                 Collabarter
+                <paper-icon-button icon="account-box" title="Profile" on-click="onClick"></paper-icon-button>
+                <paper-icon-button icon="search" title="Search" on-click="onClick"></paper-icon-button>
+                <paper-icon-button icon="communication:chat" title="Chat" on-click="onClick"></paper-icon-button>
+                <paper-icon-button icon="social:school" title="Tutors" on-click="onClick"></paper-icon-button>
+                <paper-icon-button icon="social:person" title="Students" on-click="onClick"></paper-icon-button>
+            </app-toolbar>
+
+        </app-header>
+        </app-header-layout>
+        hello world
+        <div>
+            hello world 2
+            <iron-pages selected={{selectedPage}} attr-for-selected="pagename">
+                <div pagename="Profile" >
+                    <paper-input label="First Name" value = {{profile.firstname}}>
+                        <iron-icon icon="account-circle" slot="prefix"></iron-icon>
+                        <div slot="suffix"></div>
+                    </paper-input>
+                    <paper-input label="Last Name"  value = {{profile.lastname}}>
+                        <iron-icon icon="account-circle" slot="prefix"></iron-icon>
+                        <div slot="suffix"></div>
+                    </paper-input>
+                    <paper-input label="University"  value = {{profile.university}}>
+                        <iron-icon icon="social:domain" slot="prefix"></iron-icon>
+                        <div slot="suffix"></div>
+                    </paper-input>
+                    <paper-input label="Major"  value = {{profile.major}}>
+                        <iron-icon icon="social:school" slot="prefix"></iron-icon>
+                        <div slot="suffix"></div>
+                    </paper-input>
+                    <paper-input label="GPA"  value = {{profile.gpa}}>
+                        <iron-icon icon="book" slot="prefix"></iron-icon>
+                        <div slot="suffix"></div>
+                    </paper-input>
+                    <paper-button on-click="onClickSaveProf">Save</paper-button>
+
+                </div>
+                <div pagename="Search" >
+                    <paper-input label="Search any key word to find tutors" value = {{searchInput}}>
+                        <paper-icon-button icon="search" on-click="searchClick"  slot="suffix"></paper-icon-button>
+                        <div slot="suffix"></div>
+                    </paper-input>
+                    <iron-list items="{{searchResults}}"as="item">
+                        <template>
+                            <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
+                                         major = [[item.major]] gpa = [[item.gpa]] >
+
+                            </person-card>
+                        </template>
+                    </iron-list>
+                </div>
+                <div pagename="Tutors" >
+                    <iron-list items="{{tutorList}}"as="item">
+                        <template>
+                        <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
+                                     major = [[item.major]] gpa = [[item.gpa]] >
+
+                         </person-card>
+                        </template>
+                    </iron-list>
+                </div>
+                <div pagename="Students" >
+                    <iron-list items="{{studentList}}"as="item">
+                        <template>
+                            <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
+                                         major = [[item.major]] gpa = [[item.gpa]] >
+
+                            </person-card>
+                        </template>
+                    </iron-list>
+                </div>
+                <div pagename="Chat" >
+                    This is Chat
+                </div>
+            </iron-pages>
+        </div>
+
+    </template>
+
+</dom-module>
+<script>
+HTMLImports.whenReady(function() {
+    Polymer({
+        is:"collabarter-main",
+        properties : {
+            userEmail: String,
+            access_token: String,
+            teamresults: Array,
+            selectedPage: {type: String, value: "Profile"},
+            userName: String,
+            email: String,
+            authResp: String,
+            token: String,
+            tutorList: Array,
+            studentList: Array,
+            profile: Object,
+            localUrl: {type: String, value: "http://localhost:8080"},
+            backendUrl: {type: String, value: "https://backend-dot-collabarter-188623.appspot.com"},
+            searchInput: String,
+            searchResults: Object,
+
+        },
+
+        ready: function(){
+            this.profile = {"firstname" : "", "lastname": "", "university": "", "major": "","gpa": 0};
+            this.tutorList = [{"firstname" : "Shardool", "lastname": "Pathak", "university": "Umass", "major": "Computer Science","gpa": 3.9},
+            {"firstname" : "Shioro", "lastname": "Pathak","university": "UC San Diego", "major": "Cognitive Science","gpa": 3.9},
+            {"firstname" : "Dan", "lastname": "Smith", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
+
+            this.studentList = [{"firstname" : "Chinmay", "lastname": "Gharpure", "university": "Stanford", "major": "Applied Math","gpa": 3.9},
+            {"firstname" : "Parth", "lastname": "Patel","university": "Brown University", "major": "Electrical Engineering","gpa": 3.9},
+            {"firstname" : "Dan", "lastname": "Smith", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
+
+        },
+        handleError: function(event, request) {
+            var re = event.detail.request.xhr.response;
+            console.log("registration error:");
+            console.log(request);
+        },
+        onClick: function(e){
+            var btn = e.target;
+            var page = btn.getAttribute('title');
+            this.selectedPage = page;
+            console.log("ButtonClick" + page);
+        },
+        onClickSaveProf: function(e){
+            this.putProfile();
+        },
+        searchClick: function(e){
+           var u1 = this.localUrl + "/Search";
+           var req1 = new XMLHttpRequest();
+           req1.open('POST',u1,true);
+           var sj = {"search": this.searchInput}
+           req1.parent_element = this;
+           req1.onreadystatechange = function(){
+                console.log("request status changed");
+               if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                    var sr = JSON.parse(this.responseText);
+                    console.log("request done");
+                    this.parent_element.searchResults = sr;
+               }
+           }
+           req1.send(JSON.stringify(sj));
+
+
+
+        },
+        handleSignIn: function (response) {
+            console.log("signedIn");
+             //Doc - https://developers.google.com/identity/sign-in/web/reference
+            this.userName = gapi.auth2.getAuthInstance()['currentUser'].get();
+            var profile = this.userName.getBasicProfile();
+            this.email = profile.getEmail();
+            var authResp = this.userName.getAuthResponse();
+            this.token = authResp.access_token;
+            console.log(this.email);
+            console.log(this.token);
+            this.getProfile();
+
+        },  // end of handleSignIn() function
+
+        handleSignedOut: function(response) {
+
+        },
+        getProfile(){
+          //
+           var u1 = this.localUrl + "/Profile";
+           var req1 = new XMLHttpRequest();
+           req1.open('GET',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           //req1.setRequestHeader("Access-Control-Allow-Origin", "*");
+          // req1.withCredentials = true;
+           req1.parent_element = this;
+
+           req1.onreadystatechange = function(){
+                console.log("request status changed");
+               if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                    var profile = JSON.parse(this.responseText);
+                    console.log("request done");
+                    this.parent_element.profile = profile;
+               }
+           }
+           req1.send();
+           console.log("request sent");
+        },
+        putProfile(){
+           var u1 = this.localUrl + "/Profile";
+           var req1 = new XMLHttpRequest();
+           req1.open('POST',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           var gpa =  parseFloat(this.profile.gpa);
+           this.profile.gpa = gpa;
+           req1.send(JSON.stringify(this.profile));
+        }
+  });// end polymer function
+});
+
+</script>
+</html>

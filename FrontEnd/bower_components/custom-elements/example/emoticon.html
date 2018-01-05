@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<title>Custom Elements Polyfill Demo (Emoticon)</title>
+		<meta charset="utf-8" />
+
+		<script type="text/javascript" src="../dist/MutationObserver.min.js"></script>
+	 	<script type="text/javascript" src="../dist/CustomElements.min.js"></script>
+
+		<script type="text/javascript">
+
+		// create the x-emoticon prototype
+		var XEmoticonPrototype = Object.create(HTMLElement.prototype);
+		XEmoticonPrototype.createdCallback = showEmoticon;
+		XEmoticonPrototype.attributeChangedCallback = showEmoticon;
+
+		// register the x-lotto element with the document
+		var XEmoticon = document.register('x-emoticon', {
+			prototype: XEmoticonPrototype
+		});
+
+		/**
+		 * A method to populate a x-emoticon element
+		 */
+		function showEmoticon(){
+			// clear everything (just in case)
+			while (this.firstChild) {
+    			this.removeChild(this.firstChild);
+			}
+
+			var emoticons = {
+				"happy": ":-)",
+				"sad": 	 ":-(", 
+			}
+
+			var emoticon = emoticons[this.getAttribute("type")] || ":-)";
+			var text = document.createTextNode(emoticon);
+			this.appendChild(text);
+		};
+
+		</script>
+
+	</head>
+	
+	<body>
+
+	<x-emoticon></x-emoticon>
+	<x-emoticon type="happy"></x-emoticon>
+	<x-emoticon type="sad"></x-emoticon>
+
+	<!--
+	<script type="text/javascript">
+	// Dynamically adds an x-emoticon tag to the document body
+	var emoticon = document.createElement("x-emoticon");
+	document.body.appendChild(emoticon);
+	</script>
+	-->
+
+	</body>
+
+</html>
