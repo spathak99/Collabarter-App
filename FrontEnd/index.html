@@ -88,7 +88,7 @@
             <app-toolbar>
                 <google-signin
                         id="signin"
-                        client-id= "227003617958-rvku7g2t4pjebmpgt1522b6h3lu1d4mt.apps.googleusercontent.com"
+                        client-id= "227003617958-n456uiblcvdtt50d25a79r9tllntr3k3.apps.googleusercontent.com"
                         on-google-signin-success="handleSignIn"
                         on-google-signed-out="handleSignedOut"
                         scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
@@ -177,14 +177,10 @@
 HTMLImports.whenReady(function() {
     Polymer({
         is:"collabarter-main",
-        properties : {
-            userEmail: String,
-            access_token: String,
-            teamresults: Array,
+        properties : {            teamresults: Array,
             selectedPage: {type: String, value: "Profile"},
             userName: String,
             email: String,
-            authResp: String,
             token: String,
             tutorList: Array,
             studentList: Array,
@@ -196,8 +192,20 @@ HTMLImports.whenReady(function() {
 
         },
 
+        initialize: function(){
+              this.profile = {"firstname" : "", "lastname": "", "university": "", "major": "","gpa": 0};
+              this.teamresults = [];
+              this.userName = "";
+              this.email = "";
+              this.token = "";
+              this.tutorList = [];
+              this.studentList = [];
+              this.searchInput = "";
+              this.searchResults = null;
+        },
+
         ready: function(){
-            this.profile = {"firstname" : "", "lastname": "", "university": "", "major": "","gpa": 0};
+            //this.initialize();
             this.tutorList = [{"firstname" : "Shardool", "lastname": "Pathak", "university": "Umass", "major": "Computer Science","gpa": 3.9},
             {"firstname" : "Shioro", "lastname": "Pathak","university": "UC San Diego", "major": "Cognitive Science","gpa": 3.9},
             {"firstname" : "Dan", "lastname": "Smith", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
@@ -255,7 +263,7 @@ HTMLImports.whenReady(function() {
         },  // end of handleSignIn() function
 
         handleSignedOut: function(response) {
-
+            this.initialize();
         },
         getProfile(){
           //
