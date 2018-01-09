@@ -70,11 +70,6 @@
       --app-header-background-rear-layer: {
         background-color: #ef6c00;
       };
-    }
-    app-drawer {
-      --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);
-      --app-drawer-content-container: {
-        background-color: #B0BEC5;
       }
     }
     sample-content {
@@ -88,7 +83,7 @@
             <app-toolbar>
                 <google-signin
                         id="signin"
-                        client-id= "227003617958-n456uiblcvdtt50d25a79r9tllntr3k3.apps.googleusercontent.com"
+                        client-id= "227003617958-ooitu50i2ckojb2klum1ff90n26r8f48.apps.googleusercontent.com"
                         on-google-signin-success="handleSignIn"
                         on-google-signed-out="handleSignedOut"
                         scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
@@ -103,6 +98,11 @@
         </app-header>
         </app-header-layout>
         hello world
+        }
+        app-drawer {
+        --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);
+        --app-drawer-content-container: {
+        background-color: #B0BEC5;
         <div>
             hello world 2
             <iron-pages selected={{selectedPage}} attr-for-selected="pagename">
@@ -205,14 +205,14 @@ HTMLImports.whenReady(function() {
         },
 
         ready: function(){
-            //this.initialize();
+            this.initialize();
             this.tutorList = [{"firstname" : "Shardool", "lastname": "Pathak", "university": "Umass", "major": "Computer Science","gpa": 3.9},
             {"firstname" : "Shioro", "lastname": "Pathak","university": "UC San Diego", "major": "Cognitive Science","gpa": 3.9},
             {"firstname" : "Dan", "lastname": "Smith", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
 
             this.studentList = [{"firstname" : "Chinmay", "lastname": "Gharpure", "university": "Stanford", "major": "Applied Math","gpa": 3.9},
             {"firstname" : "Parth", "lastname": "Patel","university": "Brown University", "major": "Electrical Engineering","gpa": 3.9},
-            {"firstname" : "Dan", "lastname": "Smith", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
+            {"firstname" : "Dan", "lastname": "Cline", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
 
         },
         handleError: function(event, request) {
@@ -231,6 +231,9 @@ HTMLImports.whenReady(function() {
         },
         searchClick: function(e){
            var u1 = this.localUrl + "/Search";
+           if(u1.includes("local")){
+                u1 = u1 + "?email=" + this.email;
+           }
            var req1 = new XMLHttpRequest();
            req1.open('POST',u1,true);
            var sj = {"search": this.searchInput}
@@ -268,6 +271,9 @@ HTMLImports.whenReady(function() {
         getProfile(){
           //
            var u1 = this.localUrl + "/Profile";
+           if(u1.includes("local")){
+                u1 = u1 + "?email=" + this.email;
+           }
            var req1 = new XMLHttpRequest();
            req1.open('GET',u1,true);
            req1.setRequestHeader("Authorization" , "Bearer " + this.token);
@@ -281,7 +287,8 @@ HTMLImports.whenReady(function() {
                if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
                     var profile = JSON.parse(this.responseText);
                     console.log("request done");
-                    this.parent_element.profile = profile;
+                    if (profile)
+                      this.parent_element.profile = profile;
                }
            }
            req1.send();
@@ -289,12 +296,16 @@ HTMLImports.whenReady(function() {
         },
         putProfile(){
            var u1 = this.localUrl + "/Profile";
+           if(u1.includes("local")){
+                this.profile.email = this.email;
+           }
            var req1 = new XMLHttpRequest();
            req1.open('POST',u1,true);
            req1.setRequestHeader("Authorization" , "Bearer " + this.token);
            req1.setRequestHeader("Content-Type", "application/json");
            var gpa =  parseFloat(this.profile.gpa);
            this.profile.gpa = gpa;
+           console.log(this.profile);
            req1.send(JSON.stringify(this.profile));
         }
   });// end polymer function
