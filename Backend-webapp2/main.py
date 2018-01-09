@@ -9,6 +9,8 @@ scope = ['https://www.googleapis.com/auth/userinfo.email']
 
 
 def getEmail(rd=None):
+    #rd - self.request for GET
+    # rd - json.loads(self.request.body) for POST
     user = oauth.get_current_user(scope)
     email = None
     if (user):
@@ -190,8 +192,8 @@ class ProfileHandler(webapp2.RequestHandler):
         print "Inside post ..."
         print student
         print "done printing"
-        #email = getEmail(json.loads(self.request.body))
-        email = student['email']
+        email = getEmail(json.loads(self.request.body))
+        #email = student['email']
         if (email == None):
             msg = "invalid user"
             self.response.write(json.dumps(msg))
