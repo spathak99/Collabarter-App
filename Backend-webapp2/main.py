@@ -71,6 +71,7 @@ class Profile(ndb.Model):
 class ConnectionHandler(webapp2.RequestHandler):
     def post(self):
         connection = json.loads(self.request.body)
+        email = getEmail(json.loads(self.request.body))
         id = connection.get('key')
         if (id):
            key = ndb.Key('Connection',id)
@@ -111,6 +112,8 @@ class SearchHandler(webapp2.RequestHandler):
      def post(self):
           self.response.headers.add_header('Access-Control-Allow-Origin', '*')
           data = json.loads(self.request.body)
+          email = getEmail(json.loads(self.request.body))
+
           # {"search": "free text serach string"}
 
           # build query
@@ -145,7 +148,7 @@ class SearchHandler(webapp2.RequestHandler):
 class CoursesHandler(webapp2.RequestHandler):
      def post(self):
           data = self.request.body
-          email = getEmail(self.request)
+          email = getEmail(json.loads(self.request.body))
           if(email == None):
               msg = "invalid user"
               self.response.write(json.dumps(msg))
