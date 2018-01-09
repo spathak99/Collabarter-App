@@ -5,6 +5,21 @@ from google.appengine.api import search
 from google.appengine.ext import ndb
 
 scope = ['https://www.googleapis.com/auth/userinfo.email']
+
+
+
+def getEmail(rd=None):
+    user = oauth.get_current_user(scope)
+    email = None
+    if (user):
+        email = user.email()
+        if((email == "example@example.com") and (rd != None)):
+            email = rd.get("email")
+    if (email == ""):
+        email = None
+    return email
+
+
 class ConnectionUtil(object):
     def to_dict(self):
         result = super(ConnectionUtil, self).to_dict()
@@ -71,7 +86,7 @@ class ConnectionHandler(webapp2.RequestHandler):
 class StudentsHandler(webapp2.RequestHandler):
     #Make scaleable in future with a cursor
     def get(self):
-        email = "a@g.com"
+        email = getEmail(self.request)
         q1 = Connection.query(Connection.student == email,Connection.status == 'ACCEPTED')
         ans = []
         for c in q1:
@@ -82,7 +97,7 @@ class StudentsHandler(webapp2.RequestHandler):
 class TutorsHandler(webapp2.RequestHandler):
     #Make scaleable in future with a cursor
     def get(self):
-        email = "a@g.com"
+        email = getEmail(self.request)
         q1 = Connection.query(Connection.tutor == email,Connection.status == 'ACCEPTED')
         ans = []
         for c in q1:
@@ -128,7 +143,11 @@ class SearchHandler(webapp2.RequestHandler):
 class CoursesHandler(webapp2.RequestHandler):
      def post(self):
           data = self.request.body
-          email = 'a@g.com'
+          email = getEmail(self.request)
+          if(email == None):
+              msg = "invalid user"
+              self.response.write(json.dumps(msg))
+              return
           courses = json.loads(data)
           ents = []
           l = len(courses)
@@ -145,7 +164,7 @@ class CoursesHandler(webapp2.RequestHandler):
          
      def get(self):
 
-          email = "a@g.com"
+          email = getEmail(self.request)
           user = oauth.get_current_user()
           if user:
                print 'Hello ' + user.nickname()
@@ -167,14 +186,13 @@ class ProfileHandler(webapp2.RequestHandler):
     def post(self):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         self.response.headers['Content-Type'] = 'application/json'
-        data = self.request.body
-        user = oauth.get_current_user(scope)
-        student = json.loads(data)
-        if (user):
-            email = user.email()
-            name = user.nickname()
-            print name + " email is: " + email
-        else:
+        student = json.loads(self.request.body)
+        print "Inside post ..."
+        print student
+        print "done printing"
+        #email = getEmail(json.loads(self.request.body))
+        email = student['email']
+        if (email == None):
             msg = "invalid user"
             self.response.write(json.dumps(msg))
             return
@@ -192,17 +210,15 @@ class ProfileHandler(webapp2.RequestHandler):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         self.response.headers['Content-Type'] = 'application/json'
         # get user email first
-        user = oauth.get_current_user(scope)
-        print "inside GET Profile"
-        if (user):
-            email = user.email()
-            name = user.nickname()
-            print name + " email is: " + email
-        else:
+
+        email = getEmail(self.request)
+        #email = "shardoolpathak@gmail.com"
+        if(email == None):
             msg = "invalid user"
             self.response.write(json.dumps(msg))
+            self.response.set_status(400)
             return
-
+        print "inside GET Profile ...[" + email + "]"
         pro = Profile.get_by_id(email)
         if (pro):
             ans = pro.to_dict()
@@ -211,6 +227,8 @@ class ProfileHandler(webapp2.RequestHandler):
             self.response.write(json.dumps(ans))
         else:
             self.response.write(json.dumps(""))
+        #self.response.set_status(200)
+        return
 
     def options(self):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
