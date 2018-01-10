@@ -138,7 +138,9 @@
                     <iron-list items="{{searchResults}}"as="item">
                         <template>
                             <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
-                                         major = [[item.major]] gpa = [[item.gpa]]  relationship = [[item.relationship]] relStatus = [[item.relStatus]] >
+                                         major = [[item.major]] gpa = [[item.gpa]]
+                                         relationship = [[item.relationship]] relstatus = [[item.relStatus]]
+                                         token = [[token]] email = [[email]]>
 
                             </person-card>
                         </template>
@@ -148,7 +150,9 @@
                     <iron-list items="{{tutorList}}"as="item">
                         <template>
                         <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
-                                     major = [[item.major]] gpa = [[item.gpa]]  relationship = [[item.relationship]] relStatus = [[item.relStatus]]>
+                                     major = [[item.major]] gpa = [[item.gpa]]
+                                     relationship = [[item.relationship]] relstatus = [[item.relStatus]]
+                                     token = [[token]] email = [[email]]>
 
                          </person-card>
                         </template>
@@ -158,8 +162,9 @@
                     <iron-list items="{{studentList}}"as="item">
                         <template>
                             <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
-                                         major = [[item.major]] gpa = [[item.gpa]] relationship = [[item.relationship]] relStatus = [[item.relStatus]] >
-
+                                         major = [[item.major]] gpa = [[item.gpa]]
+                                         relationship = [[item.relationship]] relstatus = [[item.relStatus]]
+                                         token = [[token]] email = [[email]]>
                             </person-card>
                         </template>
                     </iron-list>

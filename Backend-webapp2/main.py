@@ -8,7 +8,7 @@ scope = ['https://www.googleapis.com/auth/userinfo.email']
 
 
 def getRelation(myEmail,personEmail):
-    rel = "UNKOWN"
+    rel = "NOT CONNECTED"
     relStatus = ""
     q1 = Connection.query(Connection.student == myEmail, Connection.tutor == personEmail)
     for c in q1:
@@ -100,6 +100,17 @@ class ConnectionHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(con.to_dict()))
 
+    def delete(self):
+        connection = json.loads(self.request.body)
+        email = getEmail(json.loads(self.request.body))
+        
+
+
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 class StudentsHandler(webapp2.RequestHandler):
     #Make scaleable in future with a cursor

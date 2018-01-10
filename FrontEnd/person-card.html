@@ -15,8 +15,17 @@
                 </div>
                 <div>
                     <iron-icon icon="account-circle" slot="prefix"></iron-icon>
-                    <paper-card class="cyan">
-                        [[lastname]], [[firstname]], [[relationship]]
+                    <paper-card id="" class="cyan">
+                        [[firstname]] [[lastname]]
+                    </paper-card>
+
+                    <paper-button id="btn" on-click="onClick">[[actionLabel]]</paper-button>
+
+                </div>
+                <div>
+                    <iron-icon icon="label" slot="prefix"></iron-icon>
+                    <paper-card id= "status" class="cyan">
+                        [[relationship]]
                     </paper-card>
                 </div>
                 <div>
@@ -37,12 +46,6 @@
                         [[gpa]]
                     </paper-card>
                 </div>
-                <div>
-                    <paper-icon-button title="actionLabels" on-click="onClick">
-                        [[actionLabel]]
-                    </paper-icon-button>
-
-                </div>
             </paper-card>
         </content>
     </template>
@@ -55,28 +58,90 @@
                 university: String,
                 major: String,
                 gpa: String,
-                actionLabel: String,
-                relationship: String, //Tutor,Student,Unknown
-                relStatus: String,   //pending,accepted,
+                personemail: String,
+                actionLabel: {type: String, value: "BUTTON"},
+                relationship:  {type: String, observer: "relationshipChanged"}, //Tutor,Student,Unknown,pending
+                relstatus:{type: String, observer: "relStatusChanged"},   //pending,accepted,
+                token: String,
+                email: String,
+                localUrl: {type: String, value: "http://localhost:8080"},
+                backendUrl: {type: String, value: "https://backend-dot-collabarter-188623.appspot.com"},
+            },
+            initialize: function(){
             },
             ready: function(){
 
             },
             onClick: function(e){
-                var btn = e.target;
-                var bl = this.actionLabel;
-                var s = this.relStatus;
-                if(s == "PENDING"){
-                    console.log(bl);
-                }else if(s == "UNKNOWN"){
-                    console.log(bl);
-                }else if(s == "STUDENT"){
-                    console.log(bl);
-                }else if(s == "TUTOR"){
-                    console.log(bl);
-                }
+               var r = this.relationship;
+               var s = this.relstatus;
+               var u1 = this.localUrl + "/Search";
+               if(u1.includes("local")){
+                    u1 = u1 + "?email=" + this.email;
+               }
+               var req1 = new XMLHttpRequest();
+               var con = {"student": "","tutor": "","message": "msg","status": ""}
 
-            }
+               if(r == "NOT CONNECTED"){
+                   //post new connection request
+                    req1.open('POST',u1,true);
+                    con.student = this.email;
+                    con.tutor = this.personemail;
+                    con.status = "PENDING";
+               }else if(r == "STUDENT"){
+                   //delete connection
+                    req1.open('DELETE',u1,true);
+                    con.student = this.personemail;
+                    con.tutor = this.email;
+
+               }else if(r == "TUTOR"){
+                    //delete connection
+                    req1.open('DELETE',u1,true);
+                    con.student = this.email;
+                    con.tutor = this.personemail;
+               }
+               //var sj = {"search": this.searchInput}
+               req1.parent_element = this;
+               req1.onreadystatechange = function(){
+                    console.log("request status changed");
+                   if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                        //var sr = JSON.parse(this.responseText);
+                        //console.log("request done");
+                        //this.parent_element.searchResults = sr;
+                   }
+           }
+           req1.send(JSON.stringify(con));
+
+            },
+            setActionLabel: function(){
+                 if(this.relationship == null || this.relstatus == null){
+                    return;
+                 }
+                 var r = this.relationship;
+                 var s = this.relstatus;
+                 if(r == "NOT CONNECTED"){
+                    this.actionLabel = "Connect";
+                 }else if(r == "STUDENT"){
+                    if(s == "PENDING"){
+                       this.actionLabel = "Cancel Request";
+                    }else{
+                        this.actionLabel = "Remove Student";
+                    }
+                 }else if(r == "TUTOR"){
+                    if(s == "PENDING"){
+                       this.actionLabel = "Cancel Request";
+                    }else{
+                        this.actionLabel = "Remove Tutor";
+                    }
+                 }
+
+            },
+            relationshipChanged(newValue, oldValue) {
+                this.setActionLabel();
+            },
+            relStatusChanged(newValue, oldValue) {
+                this.setActionLabel();
+            },
 
         });
     </script>
