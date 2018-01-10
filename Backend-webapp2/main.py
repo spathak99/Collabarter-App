@@ -87,23 +87,17 @@ class ConnectionHandler(webapp2.RequestHandler):
     def post(self):
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
-        id = connection.get('key')
-        if (id):
-           key = ndb.Key('Connection',id)
-           con = key.get()
-           con.status = connection['status']
-           con.put()
-        else:
-            # create new connection request
-            con = Connection(student=connection['student'],tutor=connection['tutor'],message=connection['message'],status=connection['status'])
-            con.put()
+        con = Connection(student=connection['student'], tutor=connection['tutor'], message=connection['message'],
+                         status=connection['status'])
+        con.key = ndb.Key(Connection, connection['student'] + '_' + connection['tutor'])
+        con.put()
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(con.to_dict()))
 
     def delete(self):
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
-        
+
 
 
 
@@ -158,6 +152,7 @@ class SearchHandler(webapp2.RequestHandler):
                    p = prof.to_dict()
                    p['relationship'] = rel
                    p['relStatus'] = relStatus
+                   p['email'] = prof.key.id()
                    profiles.append(p)
 
           #index = search.Index('Course')
