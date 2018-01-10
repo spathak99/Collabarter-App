@@ -7,6 +7,21 @@ from google.appengine.ext import ndb
 scope = ['https://www.googleapis.com/auth/userinfo.email']
 
 
+def getRelation(myEmail,personEmail):
+    rel = "UNKOWN"
+    relStatus = ""
+    q1 = Connection.query(Connection.student == myEmail, Connection.tutor == personEmail)
+    for c in q1:
+        relStatus = c.status
+        rel = "STUDENT"
+        return rel,relStatus
+    q2 = Connection.query(Connection.tutor == myEmail, Connection.student == personEmail)
+    for c in q2:
+        relStatus = c.status
+        rel = "TUTOR"
+        return rel,relStatus
+    return rel, relStatus
+
 
 def getEmail(rd=None):
     #rd - self.request for GET
@@ -112,7 +127,7 @@ class SearchHandler(webapp2.RequestHandler):
      def post(self):
           self.response.headers.add_header('Access-Control-Allow-Origin', '*')
           data = json.loads(self.request.body)
-          email = getEmail(json.loads(self.request.body))
+          myEmail = getEmail(json.loads(self.request.body))
 
           # {"search": "free text serach string"}
 
@@ -128,7 +143,11 @@ class SearchHandler(webapp2.RequestHandler):
           for r in results:
                prof = Profile.get_by_id(r.doc_id)
                if (prof):
-                    profiles.append(prof.to_dict())
+                   rel,relStatus = getRelation(myEmail,prof.key.id())
+                   p = prof.to_dict()
+                   p['relationship'] = rel
+                   p['relStatus'] = relStatus
+                   profiles.append(p)
 
           #index = search.Index('Course')
           #results = index.search(query)
@@ -216,15 +235,15 @@ class ProfileHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         # get user email first
 
-        email = getEmail(self.request)
+        myEmail = getEmail(self.request)
         #email = "shardoolpathak@gmail.com"
-        if(email == None):
+        if(myEmail == None):
             msg = "invalid user"
             self.response.write(json.dumps(msg))
             self.response.set_status(400)
             return
-        print "inside GET Profile ...[" + email + "]"
-        pro = Profile.get_by_id(email)
+        print "inside GET Profile ...[" + myEmail + "]"
+        pro = Profile.get_by_id(myEmail)
         if (pro):
             ans = pro.to_dict()
             print 'getting profile ...'

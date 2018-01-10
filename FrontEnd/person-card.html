@@ -16,7 +16,7 @@
                 <div>
                     <iron-icon icon="account-circle" slot="prefix"></iron-icon>
                     <paper-card class="cyan">
-                        [[lastname]], [[firstname]]
+                        [[lastname]], [[firstname]], [[relationship]]
                     </paper-card>
                 </div>
                 <div>
@@ -37,6 +37,12 @@
                         [[gpa]]
                     </paper-card>
                 </div>
+                <div>
+                    <paper-icon-button title="actionLabels" on-click="onClick">
+                        [[actionLabel]]
+                    </paper-icon-button>
+
+                </div>
             </paper-card>
         </content>
     </template>
@@ -49,10 +55,28 @@
                 university: String,
                 major: String,
                 gpa: String,
+                actionLabel: String,
+                relationship: String, //Tutor,Student,Unknown
+                relStatus: String,   //pending,accepted,
             },
             ready: function(){
 
             },
+            onClick: function(e){
+                var btn = e.target;
+                var bl = this.actionLabel;
+                var s = this.relStatus;
+                if(s == "PENDING"){
+                    console.log(bl);
+                }else if(s == "UNKNOWN"){
+                    console.log(bl);
+                }else if(s == "STUDENT"){
+                    console.log(bl);
+                }else if(s == "TUTOR"){
+                    console.log(bl);
+                }
+
+            }
 
         });
     </script>
