@@ -89,25 +89,24 @@
 
 
             decideAction: function(){
-                 if((this.relationship == null) || (this.relstatus == null) || (this.invitation == null)){return;}
+                 if((this.relstatus == null) || (this.invitation == null)){return;}
                  var ar,con,can,rem;
                  ar = false;
                  con = false;
                  can = false;
                  rem = false;
-                 if(this.relationship == "NOT CONNECTED"){
+                 if(this.relstatus == "NOT CONNECTED"){
                     if(this.invitation){
                         ar = true;
                     }else{
                         con = true;
                     }
+                 }else if(this.relstatus == "PENDING"){
+                    can = true;
                  }else{
-                    if(this.relstatus == "PENDING"){
-                        can = true;
-                     }else{
-                        rem = true;
-                     }
-                 }
+                     rem = true;
+                  }
+
                  this.showAcceptReject = ar;
                  this.showConnect = con;
                  this.showCancel = can;
@@ -116,6 +115,15 @@
 
 
             onClickConnect: function(e){
+               var u1 = this.localUrl + "/Connection";
+               if(u1.includes("local")){
+                    u1 = u1 + "?email=" + this.email;
+               }
+               var req1 = new XMLHttpRequest();
+               var con;
+               con = {"email": this.email,"person": this.personemail,"message": "Please Connect with me"}
+               req1.open('POST',u1,true);
+               req1.send(JSON.stringify(con));
 
             },
 
@@ -136,7 +144,7 @@
             },
 
             relationshipObserver: function(){
-                this.decideAction();
+                //this.decideAction();
             },
 
             relStatusObserver: function(){
@@ -146,43 +154,6 @@
             invObserver: function(){
                 this.decideAction();
             },
-
-            onClick: function(e){
-               var r = this.relationship;
-               var s = this.relstatus;
-               var u1 = this.localUrl + "/Connection";
-               if(u1.includes("local")){
-                    u1 = u1 + "?email=" + this.email;
-               }
-               var req1 = new XMLHttpRequest();
-              var con;
-
-               if(r == "NOT CONNECTED"){
-                   //post new connection request
-                    con = {"email": "","person": "","message": "msg"}
-                    req1.open('POST',u1,true);
-                    con.email = this.email; //For local url testing
-                    con.person = this.personemail;
-               }else{
-                   //delete connection
-                    req1.open('DELETE',u1,true);
-                    con.person = this.personemail;
-                    con.email = this.email;
-               }
-               //var sj = {"search": this.searchInput}
-               req1.parent_element = this;
-               req1.onreadystatechange = function(){
-                    console.log("request status changed");
-                   if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
-                        //var sr = JSON.parse(this.responseText);
-                        //console.log("request done");
-                        //this.parent_element.searchResults = sr;
-                   }
-           }
-           req1.send(JSON.stringify(con));
-
-            },
-
 
         });
     </script>

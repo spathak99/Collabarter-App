@@ -6,15 +6,15 @@ from google.appengine.ext import ndb
 
 scope = ['https://www.googleapis.com/auth/userinfo.email']
 
-
-def getRelation(myEmail,personEmail):
-    rel = "NOT CONNECTED"
-    relStatus = ""
+#Relationship: student, tutor, both
+#Status: NOT CONNECTED, PENDING, APPROVED
+def getRelationStatus(myEmail,personEmail):
+    relStatus = "NOT CONNECTED"
+    print "Get relationship " + myEmail + "_"
     q1 = Connection.query(Connection.me == myEmail, Connection.person == personEmail)
     for c in q1:
         relStatus = c.status
-        rel = c.relationship
-    return rel, relStatus
+    return relStatus
 
 def getInvitation(myEmail,personEmail):
     inv = "NOT CONNECTED"
@@ -87,19 +87,21 @@ class Profile(ndb.Model):
 
 class ConnectionHandler(webapp2.RequestHandler):
     def post(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
         if (email == None):
             return
         #Connection type 1: me to tutor. {"person": personemail}
         #Connection type 2: me to student {"student": personemail}
-        con = Connection(me=email, person=connection['person'], message=connection['message'],status="PENDING")
+        con = Connection(me=email, person=connection['person'], message=connection['message'],status="PENDING", relationship="NOT CONNECTED")
         con.key = ndb.Key(Connection, email + '_' + connection['person'])
         con.put()
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(con.to_dict()))
 
     def delete(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
         if(email == None):
@@ -119,6 +121,7 @@ class ConnectionHandler(webapp2.RequestHandler):
 
 class ApproveConnectionHandler(webapp2.RequestHandler):
     def post(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
         if (email == None):
@@ -165,7 +168,8 @@ class SearchHandler(webapp2.RequestHandler):
           self.response.headers.add_header('Access-Control-Allow-Origin', '*')
           data = json.loads(self.request.body)
           myEmail = getEmail(json.loads(self.request.body))
-
+          if(myEmail == None):
+              return
           # {"search": "free text serach string"}
 
           # build query
@@ -181,10 +185,9 @@ class SearchHandler(webapp2.RequestHandler):
                prof = Profile.get_by_id(r.doc_id)
                if (prof):
                    personEmail = prof.key.id()
-                   rel,relStatus = getRelation(myEmail,personEmail)
+                   relStatus = getRelationStatus(myEmail,personEmail)
 
                    p = prof.to_dict()
-                   p['relationship'] = rel
                    p['relStatus'] = relStatus
                    p['email'] = personEmail
                    inv = getInvitation(myEmail,personEmail)

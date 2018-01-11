@@ -244,7 +244,7 @@ HTMLImports.whenReady(function() {
            }
            var req1 = new XMLHttpRequest();
            req1.open('POST',u1,true);
-           var sj = {"search": this.searchInput}
+           var sj = {"email": this.email,"search": this.searchInput}
            req1.parent_element = this;
            req1.onreadystatechange = function(){
                 console.log("request status changed");
