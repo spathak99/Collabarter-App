@@ -10,18 +10,19 @@ scope = ['https://www.googleapis.com/auth/userinfo.email']
 def getRelation(myEmail,personEmail):
     rel = "NOT CONNECTED"
     relStatus = ""
-    q1 = Connection.query(Connection.student == myEmail, Connection.tutor == personEmail)
+    q1 = Connection.query(Connection.me == myEmail, Connection.person == personEmail)
     for c in q1:
         relStatus = c.status
-        rel = "STUDENT"
-        return rel,relStatus
-    q2 = Connection.query(Connection.tutor == myEmail, Connection.student == personEmail)
-    for c in q2:
-        relStatus = c.status
-        rel = "TUTOR"
-        return rel,relStatus
+        rel = c.relationship
     return rel, relStatus
 
+def getInvitation(myEmail,personEmail):
+    inv = "NOT CONNECTED"
+    q1 = Connection.query(Connection.me == personEmail, Connection.person == myEmail)
+    for c in q1:
+        if(c.status == 'PENDING'):
+            return True
+    return False
 
 def getEmail(rd=None):
     #rd - self.request for GET
@@ -44,10 +45,11 @@ class ConnectionUtil(object):
         return result
 
 class Connection(ConnectionUtil,ndb.Model):
-     student = ndb.StringProperty()
-     tutor = ndb.StringProperty()
+     me = ndb.StringProperty()
+     person = ndb.StringProperty()
      message = ndb.StringProperty()
      status = ndb.StringProperty()
+     relationship = ndb.StringProperty()
 
 class Course(ndb.Model):
      email = ndb.StringProperty()
@@ -87,9 +89,12 @@ class ConnectionHandler(webapp2.RequestHandler):
     def post(self):
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
-        con = Connection(student=connection['student'], tutor=connection['tutor'], message=connection['message'],
-                         status=connection['status'])
-        con.key = ndb.Key(Connection, connection['student'] + '_' + connection['tutor'])
+        if (email == None):
+            return
+        #Connection type 1: me to tutor. {"person": personemail}
+        #Connection type 2: me to student {"student": personemail}
+        con = Connection(me=email, person=connection['person'], message=connection['message'],status="PENDING")
+        con.key = ndb.Key(Connection, email + '_' + connection['person'])
         con.put()
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(con.to_dict()))
@@ -97,9 +102,32 @@ class ConnectionHandler(webapp2.RequestHandler):
     def delete(self):
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
+        if(email == None):
+            return
+        # Connection type 1: me to tutor. {"tutor": personemail}
+        # Connection type 2: me to student {"student": personemail}
+        id = email + '_' + connection['person']
+        con = Connection.get_by_id(id)
+        if (con):
+            con.key.delete()
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 
-
+class ApproveConnectionHandler(webapp2.RequestHandler):
+    def post(self):
+        connection = json.loads(self.request.body)
+        email = getEmail(json.loads(self.request.body))
+        if (email == None):
+            return
+        id = email + '_' + connection['person']
+        con = Connection.get_by_id(id)
+        if(con):
+            con.status = "APPROVED"
+            con.put()
 
     def options(self):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
@@ -110,6 +138,8 @@ class StudentsHandler(webapp2.RequestHandler):
     #Make scaleable in future with a cursor
     def get(self):
         email = getEmail(self.request)
+        if (email == None):
+            return
         q1 = Connection.query(Connection.student == email,Connection.status == 'ACCEPTED')
         ans = []
         for c in q1:
@@ -121,6 +151,8 @@ class TutorsHandler(webapp2.RequestHandler):
     #Make scaleable in future with a cursor
     def get(self):
         email = getEmail(self.request)
+        if (email == None):
+            return
         q1 = Connection.query(Connection.tutor == email,Connection.status == 'ACCEPTED')
         ans = []
         for c in q1:
@@ -148,11 +180,15 @@ class SearchHandler(webapp2.RequestHandler):
           for r in results:
                prof = Profile.get_by_id(r.doc_id)
                if (prof):
-                   rel,relStatus = getRelation(myEmail,prof.key.id())
+                   personEmail = prof.key.id()
+                   rel,relStatus = getRelation(myEmail,personEmail)
+
                    p = prof.to_dict()
                    p['relationship'] = rel
                    p['relStatus'] = relStatus
-                   p['email'] = prof.key.id()
+                   p['email'] = personEmail
+                   inv = getInvitation(myEmail,personEmail)
+                   p['invitation'] = inv
                    profiles.append(p)
 
           #index = search.Index('Course')
@@ -195,6 +231,8 @@ class CoursesHandler(webapp2.RequestHandler):
      def get(self):
 
           email = getEmail(self.request)
+          if (email == None):
+              return
           user = oauth.get_current_user()
           if user:
                print 'Hello ' + user.nickname()
@@ -221,6 +259,7 @@ class ProfileHandler(webapp2.RequestHandler):
         print student
         print "done printing"
         email = getEmail(json.loads(self.request.body))
+
         #email = student['email']
         if (email == None):
             msg = "invalid user"
@@ -279,6 +318,7 @@ app = webapp2.WSGIApplication([
      ('/Courses', CoursesHandler),
      ('/Search', SearchHandler),
     ('/Connection', ConnectionHandler),
+    ('/ApproveConnection', ApproveConnectionHandler),
     ('/Students', StudentsHandler),
     ('/Tutors', TutorsHandler)
 ], debug=True)

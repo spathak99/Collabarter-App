@@ -18,9 +18,19 @@
                     <paper-card id="" class="cyan">
                         [[firstname]] [[lastname]]
                     </paper-card>
-
-                    <paper-button id="btn" on-click="onClick">[[actionLabel]]</paper-button>
-
+                    <template is="dom-if" if="[[showConnect]]">
+                    <paper-button id="connectBtn" on-click="onClickConnect">Connect</paper-button>
+                    </template>
+                    <template is="dom-if" if="[[showAcceptReject]]">
+                        <paper-button id="acceptBtn" on-click="onClickAccept">Accept</paper-button>
+                        <paper-button id="rejectBtn" on-click="onClickReject">Reject</paper-button>
+                    </template>
+                    <template is="dom-if" if="[[showCancel]]">
+                        <paper-button id="cancelBtn" on-click="onClickCancel">Cancel Request</paper-button>
+                    </template>
+                    <template is="dom-if" if="[[showRemove]]">
+                        <paper-button id="removeBtn" on-click="onClickRemove">Remove Connection</paper-button>
+                    </template>
                 </div>
                 <div>
                     <iron-icon icon="label" slot="prefix"></iron-icon>
@@ -59,11 +69,15 @@
                 major: String,
                 gpa: String,
                 personemail: String,
-                actionLabel: {type: String, value: "BUTTON"},
-                relationship:  {type: String, observer: "relationshipChanged"}, //Tutor,Student,Unknown,pending
-                relstatus:{type: String, observer: "relStatusChanged"},   //pending,accepted,
+                relationship:  {type: String, observer: "relationshipObserver"},
+                relstatus: {type: String, observer: "relStatusObserver"},
                 token: String,
                 email: String,
+                showConnect: Boolean,
+                showAcceptReject: Boolean,
+                showCancel: Boolean,
+                showRemove: Boolean,
+                invitation: {type: String, observer: "invObserver"},
                 localUrl: {type: String, value: "http://localhost:8080"},
                 backendUrl: {type: String, value: "https://backend-dot-collabarter-188623.appspot.com"},
             },
@@ -72,6 +86,67 @@
             ready: function(){
 
             },
+
+
+            decideAction: function(){
+                 if((this.relationship == null) || (this.relstatus == null) || (this.invitation == null)){return;}
+                 var ar,con,can,rem;
+                 ar = false;
+                 con = false;
+                 can = false;
+                 rem = false;
+                 if(this.relationship == "NOT CONNECTED"){
+                    if(this.invitation){
+                        ar = true;
+                    }else{
+                        con = true;
+                    }
+                 }else{
+                    if(this.relstatus == "PENDING"){
+                        can = true;
+                     }else{
+                        rem = true;
+                     }
+                 }
+                 this.showAcceptReject = ar;
+                 this.showConnect = con;
+                 this.showCancel = can;
+                 this.showRemove = rem;
+            },
+
+
+            onClickConnect: function(e){
+
+            },
+
+            onClickAccept: function(e){
+
+            },
+
+            onClickReject: function(e){
+
+            },
+
+            onClickCancel: function(e){
+
+            },
+
+            onClickRemove: function(e){
+
+            },
+
+            relationshipObserver: function(){
+                this.decideAction();
+            },
+
+            relStatusObserver: function(){
+                this.decideAction();
+            },
+
+            invObserver: function(){
+                this.decideAction();
+            },
+
             onClick: function(e){
                var r = this.relationship;
                var s = this.relstatus;
@@ -80,25 +155,19 @@
                     u1 = u1 + "?email=" + this.email;
                }
                var req1 = new XMLHttpRequest();
-               var con = {"student": "","tutor": "","message": "msg","status": ""}
+              var con;
 
                if(r == "NOT CONNECTED"){
                    //post new connection request
+                    con = {"email": "","person": "","message": "msg"}
                     req1.open('POST',u1,true);
-                    con.student = this.email;
-                    con.tutor = this.personemail;
-                    con.status = "PENDING";
-               }else if(r == "STUDENT"){
+                    con.email = this.email; //For local url testing
+                    con.person = this.personemail;
+               }else{
                    //delete connection
                     req1.open('DELETE',u1,true);
-                    con.student = this.personemail;
-                    con.tutor = this.email;
-
-               }else if(r == "TUTOR"){
-                    //delete connection
-                    req1.open('DELETE',u1,true);
-                    con.student = this.email;
-                    con.tutor = this.personemail;
+                    con.person = this.personemail;
+                    con.email = this.email;
                }
                //var sj = {"search": this.searchInput}
                req1.parent_element = this;
@@ -113,35 +182,7 @@
            req1.send(JSON.stringify(con));
 
             },
-            setActionLabel: function(){
-                 if(this.relationship == null || this.relstatus == null){
-                    return;
-                 }
-                 var r = this.relationship;
-                 var s = this.relstatus;
-                 if(r == "NOT CONNECTED"){
-                    this.actionLabel = "Connect";
-                 }else if(r == "STUDENT"){
-                    if(s == "PENDING"){
-                       this.actionLabel = "Cancel Request";
-                    }else{
-                        this.actionLabel = "Remove Student";
-                    }
-                 }else if(r == "TUTOR"){
-                    if(s == "PENDING"){
-                       this.actionLabel = "Cancel Request";
-                    }else{
-                        this.actionLabel = "Remove Tutor";
-                    }
-                 }
 
-            },
-            relationshipChanged(newValue, oldValue) {
-                this.setActionLabel();
-            },
-            relStatusChanged(newValue, oldValue) {
-                this.setActionLabel();
-            },
 
         });
     </script>
