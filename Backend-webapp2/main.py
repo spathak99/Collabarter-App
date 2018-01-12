@@ -6,6 +6,10 @@ from google.appengine.ext import ndb
 
 scope = ['https://www.googleapis.com/auth/userinfo.email']
 
+
+def getConnection(myEmail,personEmail):
+    q1 = Connection.query(Connection.me == myEmail, Connection.person == personEmail)
+
 #Relationship: student, tutor, both
 #Status: NOT CONNECTED, PENDING, APPROVED
 def getRelationStatus(myEmail,personEmail):
@@ -14,6 +18,11 @@ def getRelationStatus(myEmail,personEmail):
     q1 = Connection.query(Connection.me == myEmail, Connection.person == personEmail)
     for c in q1:
         relStatus = c.status
+        return relStatus
+    q2 = Connection.query(Connection.me == personEmail, Connection.person == myEmail)
+    for c in q2:
+        relStatus = c.status
+        return relStatus
     return relStatus
 
 def getInvitation(myEmail,personEmail):
@@ -125,14 +134,33 @@ class RemoveConnectionHandler(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
-class ApproveConnectionHandler(webapp2.RequestHandler):
+class RejectInvitationHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
+        connection = json.loads(self.request.body)
+        email = getEmail(json.loads(self.request.body))
+        if(email == None):
+            return
+        # Connection type 1: me to tutor. {"tutor": personemail}
+        # Connection type 2: me to student {"student": personemail}
+        id =connection['person'] + '_' +  email
+        con = Connection.get_by_id(id)
+        if (con):
+            con.key.delete()
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
+
+class ApproveInvitationHandler(webapp2.RequestHandler):
     def post(self):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
         if (email == None):
             return
-        id = email + '_' + connection['person']
+        id =  connection['person']+ '_' + email
         con = Connection.get_by_id(id)
         if(con):
             con.status = "APPROVED"
@@ -327,7 +355,8 @@ app = webapp2.WSGIApplication([
      ('/Courses', CoursesHandler),
      ('/Search', SearchHandler),
     ('/Connection', ConnectionHandler),
-    ('/ApproveConnection', ApproveConnectionHandler),
+    ('/ApproveInvitation', ApproveInvitationHandler),
+    ('/RejectInvitation', RejectInvitationHandler),
     ('/RemoveConnection', RemoveConnectionHandler),
     ('/Students', StudentsHandler),
     ('/Tutors', TutorsHandler)
