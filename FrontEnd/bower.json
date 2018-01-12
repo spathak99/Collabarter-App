@@ -31,6 +31,7 @@
     "iron-input": "PolymerElements/iron-input",
     "paper-card": "PolymerElements/paper-card",
     "iron-list": "PolymerElements/iron-list",
-    "paper-button": "PolymerElements/paper-button#^2.0.0"
+    "paper-button": "PolymerElements/paper-button#^2.0.0",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.1"
   }
 }
