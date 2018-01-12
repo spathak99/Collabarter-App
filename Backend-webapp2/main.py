@@ -104,6 +104,9 @@ class ConnectionHandler(webapp2.RequestHandler):
         email = getEmail(json.loads(self.request.body))
         if (email == None):
             return
+        con = getConnection(email,connection['person'])
+        if(con):
+            return
         #Connection type 1: me to tutor. {"person": personemail}
         #Connection type 2: me to student {"student": personemail}
         con = Connection(me=email, person=connection['person'], message=connection['message'],status="PENDING", relationship="NOT CONNECTED")
