@@ -96,14 +96,14 @@
                  can = false;
                  rem = false;
                  if(this.relstatus == "NOT CONNECTED"){
+                      con = true;
+                 }else if(this.relstatus == "PENDING"){
                     if(this.invitation){
                         ar = true;
                     }else{
-                        con = true;
+                        can = true;
                     }
-                 }else if(this.relstatus == "PENDING"){
-                    can = true;
-                 }else{
+                 }else{//You are connected
                      rem = true;
                   }
 

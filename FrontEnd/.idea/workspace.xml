@@ -24,8 +24,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="53">
-              <caret line="241" column="36" lean-forward="true" selection-start-line="241" selection-start-column="36" selection-end-line="242" selection-end-column="49" />
+            <state relative-caret-position="101">
+              <caret line="138" column="34" lean-forward="true" selection-start-line="138" selection-start-column="34" selection-end-line="138" selection-end-column="34" />
               <folding />
             </state>
           </provider>
@@ -34,8 +34,8 @@
       <file leaf-file-name="person-card.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/person-card.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="492">
-              <caret line="177" column="73" lean-forward="true" selection-start-line="177" selection-start-column="73" selection-end-line="177" selection-end-column="73" />
+            <state relative-caret-position="450">
+              <caret line="108" column="0" lean-forward="true" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -80,6 +80,8 @@
       <find>lActionLabel</find>
       <find>act</find>
       <find>access-control</find>
+      <find>inv</find>
+      <find>invitation</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -269,7 +271,7 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.044198897" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.044198897" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -518,16 +520,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/person-card.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="492">
-          <caret line="177" column="73" lean-forward="true" selection-start-line="177" selection-start-column="73" selection-end-line="177" selection-end-column="73" />
+        <state relative-caret-position="450">
+          <caret line="108" column="0" lean-forward="true" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="53">
-          <caret line="241" column="36" lean-forward="true" selection-start-line="241" selection-start-column="36" selection-end-line="242" selection-end-column="49" />
+        <state relative-caret-position="101">
+          <caret line="138" column="34" lean-forward="true" selection-start-line="138" selection-start-column="34" selection-end-line="138" selection-end-column="34" />
           <folding />
         </state>
       </provider>

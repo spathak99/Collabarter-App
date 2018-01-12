@@ -8,22 +8,25 @@ scope = ['https://www.googleapis.com/auth/userinfo.email']
 
 
 def getConnection(myEmail,personEmail):
-    q1 = Connection.query(Connection.me == myEmail, Connection.person == personEmail)
+    id = myEmail + '_' + personEmail
+    con = Connection.get_by_id(id)
+    if(con):
+        return con
+    id = personEmail + '_' + myEmail
+    con = Connection.get_by_id(id)
+    if(con):
+        return con
+    return None
+
 
 #Relationship: student, tutor, both
 #Status: NOT CONNECTED, PENDING, APPROVED
 def getRelationStatus(myEmail,personEmail):
-    relStatus = "NOT CONNECTED"
-    print "Get relationship " + myEmail + "_"
-    q1 = Connection.query(Connection.me == myEmail, Connection.person == personEmail)
-    for c in q1:
-        relStatus = c.status
-        return relStatus
-    q2 = Connection.query(Connection.me == personEmail, Connection.person == myEmail)
-    for c in q2:
-        relStatus = c.status
-        return relStatus
-    return relStatus
+    con = getConnection(myEmail,personEmail)
+    if(con):
+        return con.status
+    else:
+        return "NOT CONNECTED"
 
 def getInvitation(myEmail,personEmail):
     inv = "NOT CONNECTED"
@@ -124,8 +127,7 @@ class RemoveConnectionHandler(webapp2.RequestHandler):
             return
         # Connection type 1: me to tutor. {"tutor": personemail}
         # Connection type 2: me to student {"student": personemail}
-        id = email + '_' + connection['person']
-        con = Connection.get_by_id(id)
+        con = getConnection(email,connection['person'])
         if (con):
             con.key.delete()
 
@@ -143,8 +145,7 @@ class RejectInvitationHandler(webapp2.RequestHandler):
             return
         # Connection type 1: me to tutor. {"tutor": personemail}
         # Connection type 2: me to student {"student": personemail}
-        id =connection['person'] + '_' +  email
-        con = Connection.get_by_id(id)
+        con = getConnection(email,connection['person'])
         if (con):
             con.key.delete()
 
@@ -160,8 +161,7 @@ class ApproveInvitationHandler(webapp2.RequestHandler):
         email = getEmail(json.loads(self.request.body))
         if (email == None):
             return
-        id =  connection['person']+ '_' + email
-        con = Connection.get_by_id(id)
+        con = getConnection(email,connection['person'])
         if(con):
             con.status = "APPROVED"
             con.put()
