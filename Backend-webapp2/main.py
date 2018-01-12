@@ -100,7 +100,14 @@ class ConnectionHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(con.to_dict()))
 
-    def delete(self):
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
+
+class RemoveConnectionHandler(webapp2.RequestHandler):
+    def post(self):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         connection = json.loads(self.request.body)
         email = getEmail(json.loads(self.request.body))
@@ -117,7 +124,6 @@ class ConnectionHandler(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
-
 
 class ApproveConnectionHandler(webapp2.RequestHandler):
     def post(self):
@@ -322,6 +328,7 @@ app = webapp2.WSGIApplication([
      ('/Search', SearchHandler),
     ('/Connection', ConnectionHandler),
     ('/ApproveConnection', ApproveConnectionHandler),
+    ('/RemoveConnection', RemoveConnectionHandler),
     ('/Students', StudentsHandler),
     ('/Tutors', TutorsHandler)
 ], debug=True)

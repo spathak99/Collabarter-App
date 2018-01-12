@@ -123,6 +123,7 @@
                var con;
                con = {"email": this.email,"person": this.personemail,"message": "Please Connect with me"}
                req1.open('POST',u1,true);
+               req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.send(JSON.stringify(con));
 
             },
@@ -136,11 +137,14 @@
             },
 
             onClickCancel: function(e){
+               console.log("Cancelling");
+               this.removeConnection();
 
             },
 
             onClickRemove: function(e){
-
+               console.log("Removing");
+               this.removeConnection();
             },
 
             relationshipObserver: function(){
@@ -153,6 +157,18 @@
 
             invObserver: function(){
                 this.decideAction();
+            },
+
+            removeConnection: function(){
+                var u1 = this.localUrl + "/RemoveConnection";
+               var req1 = new XMLHttpRequest();
+               var con;
+               con = {"email": this.email,"person": this.personemail}
+               req1.open('POST',u1,true);
+               req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+               req1.setRequestHeader("Content-Type", "application/json");
+
+               req1.send(JSON.stringify(con));
             },
 
         });
