@@ -21,12 +21,7 @@ def getConnection(myEmail,personEmail):
 
 #Relationship: student, tutor, both
 #Status: NOT CONNECTED, PENDING, APPROVED
-def getRelationStatus(myEmail,personEmail):
-    con = getConnection(myEmail,personEmail)
-    if(con):
-        return con.status
-    else:
-        return "NOT CONNECTED"
+
 
 def getInvitation(myEmail,personEmail):
     inv = "NOT CONNECTED"
@@ -61,7 +56,7 @@ class Connection(ConnectionUtil,ndb.Model):
      person = ndb.StringProperty()
      message = ndb.StringProperty()
      status = ndb.StringProperty()
-     relationship = ndb.StringProperty()
+     relationship = ndb.StringProperty()#BOTH, TUTOR, STUDENT, NONE
 
 class Course(ndb.Model):
      email = ndb.StringProperty()
@@ -222,13 +217,19 @@ class SearchHandler(webapp2.RequestHandler):
                prof = Profile.get_by_id(r.doc_id)
                if (prof):
                    personEmail = prof.key.id()
-                   relStatus = getRelationStatus(myEmail,personEmail)
+                   relStatus = "NOT CONNECTED"
+                   rel = "NONE"
+                   con = getConnection(myEmail, personEmail)
+                   if (con):
+                       relStatus = con.status
+                       rel = con.relationship
 
                    p = prof.to_dict()
                    p['relStatus'] = relStatus
                    p['email'] = personEmail
                    inv = getInvitation(myEmail,personEmail)
                    p['invitation'] = inv
+                   p['relationship'] = rel
                    profiles.append(p)
 
           #index = search.Index('Course')
@@ -345,6 +346,23 @@ class ProfileHandler(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
          
+class RelationshipHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
+        connection = json.loads(self.request.body)
+        email = getEmail(json.loads(self.request.body))
+        if (email == None):
+            return
+        con = getConnection(email,connection['person'])
+        if(con):
+            con.relationship = connection['relationship']
+            con.put()
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
+
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
@@ -361,6 +379,7 @@ app = webapp2.WSGIApplication([
     ('/ApproveInvitation', ApproveInvitationHandler),
     ('/RejectInvitation', RejectInvitationHandler),
     ('/RemoveConnection', RemoveConnectionHandler),
+    ('/ChangeRelation', RelationshipHandler),
     ('/Students', StudentsHandler),
     ('/Tutors', TutorsHandler)
 ], debug=True)

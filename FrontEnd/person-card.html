@@ -35,8 +35,8 @@
                 </div>
                 <div>
                     <iron-icon icon="label" slot="prefix"></iron-icon>
-                    <paper-checkbox>Tutor</paper-checkbox>
-                    <paper-checkbox>Student</paper-checkbox>
+                    <paper-checkbox checked = [[isTutor]] on-change = "relStatusChanged">Tutor</paper-checkbox>
+                    <paper-checkbox checked = [[isStudent]] on-change = "relStatusChanged">Student</paper-checkbox>
 
                 </div>
                 <div>
@@ -78,6 +78,8 @@
                 showAcceptReject: Boolean,
                 showCancel: Boolean,
                 showRemove: Boolean,
+                isTutor: Boolean,
+                isStudent: Boolean,
                 invitation: {type: String, observer: "invObserver"},
                 localUrl: {type: String, value: "http://localhost:8080"},
                 backendUrl: {type: String, value: "https://backend-dot-collabarter-188623.appspot.com"},
@@ -158,7 +160,10 @@
             },
 
             relationshipObserver: function(){
-                //this.decideAction();
+                if(this.relationship == "BOTH"){this.isTutor = true; this.isStudent = true;}
+                else if(this.relationship == "STUDENT"){this.isTutor = false; this.isStudent = true;}
+                else if(this.relationship == "TUTOR"){this.isTutor = true; this.isStudent = false;}
+                else{this.isTutor = false; this.isStudent = false;}
             },
 
             relStatusObserver: function(){
@@ -167,6 +172,28 @@
 
             invObserver: function(){
                 this.decideAction();
+            },
+
+           getRelationship: function(){
+                var rel;
+                if (this.isTutor && this.isStudent){rel = "BOTH";}
+                else if(this.isTutor && !this.student){rel = "TUTOR";}
+                else if(!this.isTutor && this.student){rel = "STUDENT";}
+                else{rel = "NONE"}
+               return rel;
+            },
+            relStatusChanged: function(e){
+                var rel = this.getRelationship();
+                var u1 = this.localUrl + "/ChangeRelation";
+               var req1 = new XMLHttpRequest();
+               var con;
+               con = {"email": this.email,"person": this.personemail, "relationship": rel};
+               req1.open('POST',u1,true);
+               req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+               req1.setRequestHeader("Content-Type", "application/json");
+
+               req1.send(JSON.stringify(con));
+
             },
 
             removeConnection: function(){
