@@ -35,8 +35,8 @@
                 </div>
                 <div>
                     <iron-icon icon="label" slot="prefix"></iron-icon>
-                    <paper-checkbox checked = [[isTutor]] on-change = "relStatusChanged">Tutor</paper-checkbox>
-                    <paper-checkbox checked = [[isStudent]] on-change = "relStatusChanged">Student</paper-checkbox>
+                    <paper-checkbox checked = {{isTutor}} on-change = "relStatusChanged">Tutor</paper-checkbox>
+                    <paper-checkbox checked = {{isStudent}} on-change = "relStatusChanged">Student</paper-checkbox>
 
                 </div>
                 <div>
@@ -177,10 +177,11 @@
            getRelationship: function(){
                 var rel;
                 if (this.isTutor && this.isStudent){rel = "BOTH";}
-                else if(this.isTutor && !this.student){rel = "TUTOR";}
-                else if(!this.isTutor && this.student){rel = "STUDENT";}
-                else{rel = "NONE"}
-               return rel;
+                else if(this.isTutor && !this.isStudent){rel = "TUTOR";}
+                else if(!this.isTutor && this.isStudent){rel = "STUDENT";}
+                else{rel = "NONE";}
+                this.relationship = rel;
+                return rel;
             },
             relStatusChanged: function(e){
                 var rel = this.getRelationship();

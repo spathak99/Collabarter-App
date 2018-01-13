@@ -56,7 +56,7 @@ class Connection(ConnectionUtil,ndb.Model):
      person = ndb.StringProperty()
      message = ndb.StringProperty()
      status = ndb.StringProperty()
-     relationship = ndb.StringProperty()#BOTH, TUTOR, STUDENT, NONE
+     relationship = ndb.StringProperty()
 
 class Course(ndb.Model):
      email = ndb.StringProperty()
@@ -104,7 +104,7 @@ class ConnectionHandler(webapp2.RequestHandler):
             return
         #Connection type 1: me to tutor. {"person": personemail}
         #Connection type 2: me to student {"student": personemail}
-        con = Connection(me=email, person=connection['person'], message=connection['message'],status="PENDING", relationship="NOT CONNECTED")
+        con = Connection(me=email, person=connection['person'], message=connection['message'],status="PENDING", relationship="NONE")
         con.key = ndb.Key(Connection, email + '_' + connection['person'])
         con.put()
         self.response.headers['Content-Type'] = 'application/json'
@@ -223,6 +223,14 @@ class SearchHandler(webapp2.RequestHandler):
                    if (con):
                        relStatus = con.status
                        rel = con.relationship
+                       if (con.me != myEmail):
+                           print "Swapping rels.."
+                           if (rel == "STUDENT" ):
+                               print "swapping from student..."
+                               rel = "TUTOR"
+                           elif (rel == "TUTOR"):
+                               print "swapping from tutor..."
+                               rel = "STUDENT"
 
                    p = prof.to_dict()
                    p['relStatus'] = relStatus
@@ -355,7 +363,18 @@ class RelationshipHandler(webapp2.RequestHandler):
             return
         con = getConnection(email,connection['person'])
         if(con):
-            con.relationship = connection['relationship']
+            rel = connection['relationship']
+            print con.me
+            if (con.me != email):
+                print "Swapping rels"
+                if (rel == 'STUDENT'):
+                    print "swapping from student"
+                    rel = 'TUTOR'
+                elif (rel == 'TUTOR'):
+                    print "swapping from tutor"
+                    rel = 'STUDENT'
+
+            con.relationship = rel
             con.put()
 
     def options(self):

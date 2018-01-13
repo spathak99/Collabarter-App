@@ -21,21 +21,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="125" column="70" lean-forward="true" selection-start-line="125" selection-start-column="70" selection-end-line="125" selection-end-column="70" />
+            <state relative-caret-position="-942">
+              <caret line="159" column="35" lean-forward="true" selection-start-line="159" selection-start-column="35" selection-end-line="159" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="person-card.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="person-card.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/person-card.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="189" column="91" lean-forward="false" selection-start-line="189" selection-start-column="91" selection-end-line="189" selection-end-column="91" />
+            <state relative-caret-position="147">
+              <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -82,6 +82,7 @@
       <find>access-control</find>
       <find>inv</find>
       <find>invitation</find>
+      <find>relationship</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -518,18 +519,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/person-card.html">
+    <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="189" column="91" lean-forward="false" selection-start-line="189" selection-start-column="91" selection-end-line="189" selection-end-column="91" />
+        <state relative-caret-position="-942">
+          <caret line="159" column="35" lean-forward="true" selection-start-line="159" selection-start-column="35" selection-end-line="159" selection-end-column="35" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
+    <entry file="file://$PROJECT_DIR$/person-card.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="125" column="70" lean-forward="true" selection-start-line="125" selection-start-column="70" selection-end-line="125" selection-end-column="70" />
+        <state relative-caret-position="147">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
           <folding />
         </state>
       </provider>
