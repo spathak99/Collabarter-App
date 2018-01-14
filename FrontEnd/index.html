@@ -15,6 +15,8 @@
     <link rel="import" href="bower_components/iron-image/iron-image.html">
     <link rel="import" href="bower_components/iron-icons/iron-icons.html">
     <link rel="import" href="bower_components/iron-list/iron-list.html">
+    <link rel="import" href="bower_components/iron-form/iron-form.html">
+
     <link rel="import" href="bower_components/iron-icons/communication-icons.html">
     <link rel="import" href="bower_components/iron-icons/social-icons.html">
 
@@ -127,6 +129,22 @@
                         <iron-icon icon="book" slot="prefix"></iron-icon>
                         <div slot="suffix"></div>
                     </paper-input>
+                    <div id="myid"></div>
+                    <iron-list id="listone" items="{{courseList}}" as="course">
+                        <template>
+                            <div style= "overflow:auto;">
+                                <paper-input width = "25%" label="Course Name"  value={{course.name}}>
+                                </paper-input>
+                                <paper-input label="Course Description"  value={{course.description}}>
+                                </paper-input>
+                                <paper-icon-button icon="delete"  id="{{index}}"  raised on-click="deleteCourse"></paper-icon-button>
+
+                            </div>
+                        </template>
+                    </iron-list>
+                    <paper-icon-button icon="add" raised on-click="addCourse"></paper-icon-button>
+
+
                     <paper-button on-click="onClickSaveProf">Save</paper-button>
 
                 </div>
@@ -135,7 +153,7 @@
                         <paper-icon-button icon="search" on-click="searchClick"  slot="suffix"></paper-icon-button>
                         <div slot="suffix"></div>
                     </paper-input>
-                    <iron-list items="{{searchResults}}"as="item">
+                    <iron-list items="{{searchResults}}" as="item">
                         <template>
                             <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
@@ -197,11 +215,14 @@ HTMLImports.whenReady(function() {
             backendUrl: {type: String, value: "https://backend-dot-collabarter-188623.appspot.com"},
             searchInput: String,
             searchResults: Object,
+            courseList: Array,
+            deleteCourseIndex: {type: Number, observer: "deleteCourseIndexObserver"},
 
         },
 
         initialize: function(){
               this.profile = {"firstname" : "", "lastname": "", "university": "", "major": "","gpa": 0};
+          //    this.course = {"name" : "Course Name", "description": "Course Description"};
               this.teamresults = [];
               this.userName = "";
               this.email = "";
@@ -210,19 +231,16 @@ HTMLImports.whenReady(function() {
               this.studentList = [];
               this.searchInput = "";
               this.searchResults = null;
+              this.courseList = [{"name" : "", "description": ""}];
         },
 
         ready: function(){
             this.initialize();
-            this.tutorList = [{"firstname" : "Shardool", "lastname": "Pathak", "university": "Umass", "major": "Computer Science","gpa": 3.9},
-            {"firstname" : "Shioro", "lastname": "Pathak","university": "UC San Diego", "major": "Cognitive Science","gpa": 3.9},
-            {"firstname" : "Dan", "lastname": "Smith", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
 
-            this.studentList = [{"firstname" : "Chinmay", "lastname": "Gharpure", "university": "Stanford", "major": "Applied Math","gpa": 3.9},
-            {"firstname" : "Parth", "lastname": "Patel","university": "Brown University", "major": "Electrical Engineering","gpa": 3.9},
-            {"firstname" : "Dan", "lastname": "Cline", "university": "Umass", "major": "Computer Science","gpa": 3.9}];
 
         },
+
+
         handleError: function(event, request) {
             var re = event.detail.request.xhr.response;
             console.log("registration error:");
@@ -270,9 +288,41 @@ HTMLImports.whenReady(function() {
             console.log(this.email);
             console.log(this.token);
             this.getProfile();
+            this.getStudents();
+            this.getTutors();
 
         },  // end of handleSignIn() function
 
+
+        deleteCourseIndexObserver: function(newValue,oldValue){
+            var cl = this.courseList;
+             var cl2 = [];
+             for(var i = 0; i < cl.length; i++){
+                   if(i != newValue){
+                     cl2.push(cl[i]);
+                   }
+             }
+             this.courselist = null;
+             this.courselist = cl2;
+        },
+
+        deleteCourse: function(e){
+            var btn = e.target;
+            var id = btn.getAttribute("id");
+            var index = parseInt(id);
+            this.deleteCourseIndex = index;
+        },
+        addCourse: function(e){
+             var course = {"name" : "", "description": ""};
+             var cl = this.courseList;
+             cl.push(course);
+             this.courseList = null;
+             this.courseList = cl;
+
+             //var il = document.getElementById("myid");
+             //il.notifyResize();
+
+        },
         handleSignedOut: function(response) {
             this.initialize();
         },
@@ -315,7 +365,56 @@ HTMLImports.whenReady(function() {
            this.profile.gpa = gpa;
            console.log(this.profile);
            req1.send(JSON.stringify(this.profile));
-        }
+        },
+
+        getStudents(){
+            var u1 = this.localUrl + "/Students";
+            if(u1.includes("local")){
+                u1 = u1 + "?email=" + this.email;
+           }
+           var req1 = new XMLHttpRequest();
+           req1.open('GET',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           req1.parent_element = this;
+
+            req1.onreadystatechange = function(){
+                console.log("request status changed");
+               if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                    var students = JSON.parse(this.responseText);
+                    console.log("request done");
+                    if (students)
+                      this.parent_element.studentList = students;
+               }
+           }
+           req1.send();
+           console.log("request sent");
+
+        },
+        getTutors(){
+            var u1 = this.localUrl + "/Tutors";
+            if(u1.includes("local")){
+                u1 = u1 + "?email=" + this.email;
+           }
+           var req1 = new XMLHttpRequest();
+           req1.open('GET',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           req1.parent_element = this;
+
+            req1.onreadystatechange = function(){
+                console.log("request status changed");
+               if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                    var Tutors = JSON.parse(this.responseText);
+                    console.log("request done");
+                    if (Tutors)
+                      this.parent_element.tutorList = Tutors;
+               }
+           }
+           req1.send();
+           console.log("request sent");
+
+        },
   });// end polymer function
 });
 
