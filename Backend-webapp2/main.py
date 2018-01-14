@@ -170,30 +170,97 @@ class ApproveInvitationHandler(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 class StudentsHandler(webapp2.RequestHandler):
+
     #Make scaleable in future with a cursor
     def get(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         email = getEmail(self.request)
         if (email == None):
             return
-        q1 = Connection.query(Connection.student == email,Connection.status == 'ACCEPTED')
+        q1 = Connection.query(ndb.AND(Connection.me == email),(Connection.relationship.IN(['STUDENT','BOTH'])))
+
         ans = []
+        profiles = []
         for c in q1:
-            ans.append(c.to_dict())
+            prof = Profile.get_by_id(c.person)
+            print "In first loop"
+
+            relStatus = c.status
+            rel = c.relationship
+            p = prof.to_dict()
+            p['relStatus'] = relStatus
+            p['email'] = c.person
+            p['relationship'] = rel
+            profiles.append(p)
+
+        q2 = Connection.query(ndb.AND(Connection.person == email),(Connection.relationship.IN(['TUTOR','BOTH'])))
+        for c in q2:
+            print "In second loop"
+            prof = Profile.get_by_id(c.me)
+            relStatus = c.status
+            rel = c.relationship
+            if(rel == 'TUTOR'):
+                rel = 'STUDENT'
+            p = prof.to_dict()
+            p['relStatus'] = relStatus
+            p['email'] = c.me
+            p['relationship'] = rel
+            profiles.append(p)
+
+
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps(ans))
+        self.response.write(json.dumps(profiles))
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 class TutorsHandler(webapp2.RequestHandler):
-    #Make scaleable in future with a cursor
+    # Make scaleable in future with a cursor
     def get(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
         email = getEmail(self.request)
         if (email == None):
             return
-        q1 = Connection.query(Connection.tutor == email,Connection.status == 'ACCEPTED')
+        q1 = Connection.query(ndb.AND(Connection.me == email), (Connection.relationship.IN(['TUTOR', 'BOTH'])))
+
         ans = []
+        profiles = []
         for c in q1:
-            ans.append(c.to_dict())
+            prof = Profile.get_by_id(c.person)
+            print "In first loop"
+
+            relStatus = c.status
+            rel = c.relationship
+            p = prof.to_dict()
+            p['relStatus'] = relStatus
+            p['email'] = c.person
+            p['relationship'] = rel
+            profiles.append(p)
+
+        q2 = Connection.query(ndb.AND(Connection.person == email), (Connection.relationship.IN(['STUDENT', 'BOTH'])))
+        for c in q2:
+            print "In second loop"
+            prof = Profile.get_by_id(c.me)
+            relStatus = c.status
+            rel = c.relationship
+            if (rel == 'STUDENT'):
+                rel = 'TUTOR'
+            p = prof.to_dict()
+            p['relStatus'] = relStatus
+            p['email'] = c.me
+            p['relationship'] = rel
+            profiles.append(p)
+
         self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps(ans))
+        self.response.write(json.dumps(profiles))
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers[
+            'Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 class SearchHandler(webapp2.RequestHandler):
      def post(self):
