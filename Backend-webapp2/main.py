@@ -1,9 +1,12 @@
 import webapp2
 import json
+import os
 from google.appengine.api import users, oauth
 from google.appengine.api import search
 from google.appengine.ext import ndb
+from google.cloud import pubsub
 
+projectID = "collabarter-188623"
 scope = ['https://www.googleapis.com/auth/userinfo.email']
 
 
@@ -450,6 +453,50 @@ class RelationshipHandler(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 
+
+
+class SendMessageHandler(webapp2.RequestHandler):
+    def post(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
+        msg = json.loads(self.request.body)
+        email = getEmail(json.loads(self.request.body))
+        if (email == None):
+            return
+        con = getConnection(email, msg['person'])
+        if(con == None):
+            return
+        if(con.status != "APPROVED"):
+            return
+        topic_name = con.topic_name
+        if(topic_name == None):
+            #Create new topic
+            topic_name = "Chat " + email + '_' + msg['person']
+            con.topic_name = topic_name
+            con.put()
+        topic = self.create_topic(projectID,topic_name)
+
+        publisher = pubsub.PublisherClient()
+        publisher.publish(topic,msg['message'],writer=email)
+
+
+        #Post a message to this topic
+
+    def create_topic(self, project, topic_name):
+        """Create a new Pub/Sub topic."""
+        publisher = pubsub.PublisherClient()
+        topic_path = publisher.topic_path(project, topic_name)
+
+        topic = publisher.create_topic(topic_path)
+
+        print('Topic created: {}'.format(topic))
+        return topic
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
+
+
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/plain'
@@ -467,5 +514,7 @@ app = webapp2.WSGIApplication([
     ('/RemoveConnection', RemoveConnectionHandler),
     ('/ChangeRelation', RelationshipHandler),
     ('/Students', StudentsHandler),
-    ('/Tutors', TutorsHandler)
+    ('/Tutors', TutorsHandler),
+    ('/SendMessage', SendMessageHandler)
+
 ], debug=True)
