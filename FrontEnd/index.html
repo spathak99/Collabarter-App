@@ -1,6 +1,6 @@
 <html>
 <head>
-    <meta name="google-site-verification" content="AIzaSyAFavHd8cwMhBp07PIkX8cz2HP0SNRGw98" />
+    <meta name="google-site-verification" content="AIzaSyAwfSIyjCGJKmsESfj_njy48sPBnRAUnpU" />
     <meta charset="utf-8">
     <meta name="description" content="">
 
@@ -90,9 +90,8 @@
                         on-google-signed-out="handleSignedOut"
                         scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
                  Collabarter
-                <paper-icon-button icon="account-box" title="Profile" on-click="onClick"></paper-icon-button>
+                <paper-icon-button src=[[mypic]] title="Profile" on-click="onClick"></paper-icon-button>
                 <paper-icon-button icon="search" title="Search" on-click="onClick"></paper-icon-button>
-                <paper-icon-button icon="communication:chat" title="Chat" on-click="onClick"></paper-icon-button>
                 <paper-icon-button icon="social:school" title="Tutors" on-click="onClick"></paper-icon-button>
                 <paper-icon-button icon="social:person" title="Students" on-click="onClick"></paper-icon-button>
             </app-toolbar>
@@ -190,9 +189,6 @@
                         </template>
                     </iron-list>
                 </div>
-                <div pagename="Chat" >
-                    This is Chat
-                </div>
             </iron-pages>
         </div>
 
@@ -217,6 +213,7 @@ HTMLImports.whenReady(function() {
             searchResults: Object,
             courseList: Array,
             deleteCourseIndex: {type: Number, observer: "deleteCourseIndexObserver"},
+            mypic: String,
 
         },
 
@@ -285,6 +282,8 @@ HTMLImports.whenReady(function() {
             this.email = profile.getEmail();
             var authResp = this.userName.getAuthResponse();
             this.token = authResp.access_token;
+            this.mypic = profile.getImageUrl();
+
             console.log(this.email);
             console.log(this.token);
             this.getProfile();

@@ -1,6 +1,7 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/paper-card/paper-card.html">
 <link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 
 
 
@@ -12,7 +13,7 @@
         <content>
             <paper-card class="custom-card">
                 <div>
-                    <paper-card heading="Profile Picture" image="http://placehold.it/350x150/FFC107/000000" alt="Profile Picture"></paper-card>
+                    <paper-card  image= "[[mypic]]"></paper-card>
                 </div>
                 <div>
                     <iron-icon icon="account-circle" slot="prefix"></iron-icon>
@@ -32,11 +33,13 @@
                     <template is="dom-if" if="[[showRemove]]">
                         <paper-button id="removeBtn" on-click="onClickRemove">Remove Connection</paper-button>
                     </template>
+
+
                 </div>
                 <div>
-                    <iron-icon icon="label" slot="prefix"></iron-icon>
                     <paper-checkbox checked = {{isTutor}} on-change = "relStatusChanged">Tutor</paper-checkbox>
                     <paper-checkbox checked = {{isStudent}} on-change = "relStatusChanged">Student</paper-checkbox>
+                    <paper-icon-button icon="communication:chat" on-click="chatClick"></paper-icon-button>
 
                 </div>
                 <div>
@@ -69,7 +72,8 @@
                 university: String,
                 major: String,
                 gpa: String,
-                personemail: String,
+                personemail: {type: String, observer: "personEmailObserver"},
+                mypic: String,
                 relationship:  {type: String, observer: "relationshipObserver"},
                 relstatus: {type: String, observer: "relStatusObserver"},
                 token: String,
@@ -91,6 +95,27 @@
             },
 
 
+            personEmailObserver: function(){
+                if(this.personemail == null){
+                    return;
+                }
+                var u1 =  "http://picasaweb.google.com/data/entry/api/user/" + this.personemail + "?alt=json";
+
+                var req1 = new XMLHttpRequest();
+                req1.open('GET',u1,true);
+               // req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+                req1.parent_element = this;
+                req1.onreadystatechange = function(){
+                console.log("request status changed");
+                    if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                        var pr = JSON.parse(this.responseText);
+                        console.log("request done");
+                        this.parent_element.mypic = pr.entry.gphoto$thumbnail.$t;
+                    }
+                }
+                req1.send();
+
+            },
             decideAction: function(){
                  if((this.relstatus == null) || (this.invitation == null)){return;}
                  var ar,con,can,rem;
