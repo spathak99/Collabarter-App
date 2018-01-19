@@ -4,7 +4,11 @@ import os
 from google.appengine.api import users, oauth
 from google.appengine.api import search
 from google.appengine.ext import ndb
-from google.cloud import pubsub
+from oauth2client.client import GoogleCredentials
+
+import httplib2
+import requests
+#from google.cloud import pubsub
 
 projectID = "collabarter-188623"
 scope = ['https://www.googleapis.com/auth/userinfo.email']
@@ -60,7 +64,7 @@ class Connection(ConnectionUtil,ndb.Model):
      message = ndb.StringProperty()
      status = ndb.StringProperty()
      relationship = ndb.StringProperty()
-
+     topic_name = ndb.StringProperty()
 class Course(ndb.Model):
      email = ndb.StringProperty()
      name = ndb.StringProperty()
@@ -75,7 +79,7 @@ class Course(ndb.Model):
           doc = search.Document(doc_id=eval(self.key), fields=fields)
           index = search.Index('Course')
           index.put(doc)
-     
+
 
 class Profile(ndb.Model):
      firstname = ndb.StringProperty()
@@ -324,7 +328,7 @@ class SearchHandler(webapp2.RequestHandler):
           self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
           self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
-          
+
 class CoursesHandler(webapp2.RequestHandler):
      def post(self):
           data = self.request.body
@@ -342,11 +346,11 @@ class CoursesHandler(webapp2.RequestHandler):
                             name=courses[i]['name'],
                             description=courses[i]['description'])
                ents.append(crs)
-          
+
           ndb.put_multi(ents)
           self.response.headers['Content-Type'] = 'application/json'
           self.response.write(data)
-         
+
      def get(self):
 
           email = getEmail(self.request)
@@ -355,9 +359,9 @@ class CoursesHandler(webapp2.RequestHandler):
           user = oauth.get_current_user()
           if user:
                print 'Hello ' + user.nickname()
-               
+
           q1 = Course.query(Course.email == email)
-          
+
           ans = []
           for c in q1:
                ans.append(c.to_dict())
@@ -365,7 +369,7 @@ class CoursesHandler(webapp2.RequestHandler):
           print ans
           self.response.headers['Content-Type'] = 'application/json'
           self.response.write(json.dumps(ans))
-               
+
 
 
 
@@ -423,7 +427,7 @@ class ProfileHandler(webapp2.RequestHandler):
         self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
-         
+
 class RelationshipHandler(webapp2.RequestHandler):
     def post(self):
         self.response.headers.add_header('Access-Control-Allow-Origin', '*')
@@ -473,27 +477,87 @@ class SendMessageHandler(webapp2.RequestHandler):
             topic_name = "Chat " + email + '_' + msg['person']
             con.topic_name = topic_name
             con.put()
-        topic = self.create_topic(projectID,topic_name)
+        #topic = self.create_topic(projectID,topic_name)
 
-        publisher = pubsub.PublisherClient()
-        publisher.publish(topic,msg['message'],writer=email)
+        #publisher = pubsub.PublisherClient()
+        #publisher.publish(topic,msg['message'],writer=email)
+        #POST https://pubsub.googleapis.com/v1/{topic}:publish
+        u1 = "https://pubsub.googleapis.com/v1/projects/" + projectID + "/topics/" + topic_name + ":publish"
+        credentials = GoogleCredentials.get_application_default()
+        token = None
+        http = httplib2.Http()
 
+        if (credentials != None):
+            credentials = credentials.create_scoped(PUBSUB_SCOPES)
+            http = credentials.authorize(http)
+        payload = {"messages": [{"data": msg['message']}, {"attributes": {"writer": email}}]}
+        resp, content = http.request(uri=u1, method='POST', body=payload)
+        self.response.write('message sent')
+
+            #print credentials.to_json()
+            ##credentials.refresh_token()
+            #token = credentials.get_access_token()[0]
+            #print 'access token : ' + token
+        #headers = []
+        #if (token):
+        #    headers = {"Authorization": "Bearer " + token}
+        #payload = {"messages": [{"data": msg['message']}, {"attributes": {"writer": email}}]}
+        #req1 = requests.post(u1, headers=headers)
+        #ans = json.loads(req1)
 
         #Post a message to this topic
 
     def create_topic(self, project, topic_name):
+        #PUT https: // pubsub.googleapis.com / v1 /
+
         """Create a new Pub/Sub topic."""
-        publisher = pubsub.PublisherClient()
-        topic_path = publisher.topic_path(project, topic_name)
+        #publisher = pubsub.PublisherClient()
+        #topic_path = publisher.topic_path(project, topic_name)
 
-        topic = publisher.create_topic(topic_path)
-
-        print('Topic created: {}'.format(topic))
-        return topic
+        #topic = publisher.create_topic(topic_path)
+       # u1 =  "https://pubsub.googleapis.com/v1/projects/" + project + "/topics/" + topic_name
+       # headers = ("Authorization": "Bearer ")
+        #req1 = requests.put(u1,headers = headers)
+        #ans = json.loads(req1)
+       # topic = ans['name']
+        #print('Topic created: {}'.format(topic))
+        #return topic
 
     def options(self):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+        self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
+
+class PendingHandler(webapp2.RequestHandler):
+    # Make scaleable in future with a cursor
+    def get(self):
+        self.response.headers.add_header('Access-Control-Allow-Origin', '*')
+        email = getEmail(self.request)
+        if (email == None):
+            return
+        q1 = Connection.query(ndb.AND(Connection.me == email), (Connection.status == "PENDING"))
+
+        ans = []
+        profiles = []
+        for c in q1:
+            prof = Profile.get_by_id(c.person)
+            print "In first loop"
+
+            relStatus = c.status
+            rel = c.relationship
+            p = prof.to_dict()
+            p['relStatus'] = relStatus
+            p['email'] = c.person
+            p['relationship'] = rel
+            profiles.append(p)
+
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(profiles))
+
+    def options(self):
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.headers[
+            'Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
         self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 
@@ -515,6 +579,7 @@ app = webapp2.WSGIApplication([
     ('/ChangeRelation', RelationshipHandler),
     ('/Students', StudentsHandler),
     ('/Tutors', TutorsHandler),
+    ('/PendingRequests', PendingHandler),
     ('/SendMessage', SendMessageHandler)
 
 ], debug=True)

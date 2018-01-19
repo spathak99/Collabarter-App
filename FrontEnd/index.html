@@ -32,10 +32,10 @@
 
     <link rel="stylesheet" href="css/style.css">
 
-<!--    <link rel="import" href="html/team-scorecard.html">-->
+    <!--    <link rel="import" href="html/team-scorecard.html">-->
 </head>
 <body unresolved>
-    <collabarter-main></collabarter-main>
+<collabarter-main></collabarter-main>
 </body>
 <dom-module id="collabarter-main">
     <template>
@@ -82,21 +82,22 @@
         <app-header-layout>
             hello world3
             <app-header>
-            <app-toolbar>
-                <google-signin
-                        id="signin"
-                        client-id= "227003617958-ooitu50i2ckojb2klum1ff90n26r8f48.apps.googleusercontent.com"
-                        on-google-signin-success="handleSignIn"
-                        on-google-signed-out="handleSignedOut"
-                        scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
-                 Collabarter
-                <paper-icon-button src=[[mypic]] title="Profile" on-click="onClick"></paper-icon-button>
-                <paper-icon-button icon="search" title="Search" on-click="onClick"></paper-icon-button>
-                <paper-icon-button icon="social:school" title="Tutors" on-click="onClick"></paper-icon-button>
-                <paper-icon-button icon="social:person" title="Students" on-click="onClick"></paper-icon-button>
-            </app-toolbar>
+                <app-toolbar>
+                    <google-signin
+                            id="signin"
+                            client-id= "227003617958-ooitu50i2ckojb2klum1ff90n26r8f48.apps.googleusercontent.com"
+                            on-google-signin-success="handleSignIn"
+                            on-google-signed-out="handleSignedOut"
+                            scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
+                    Collabarter
+                    <paper-icon-button src=[[mypic]] title="Profile" on-click="onClick"></paper-icon-button>
+                    <paper-icon-button icon="search" title="Search" on-click="onClick"></paper-icon-button>
+                    <paper-icon-button icon="social:school" title="Tutors" on-click="onClick"></paper-icon-button>
+                    <paper-icon-button icon="social:person" title="Students" on-click="onClick"></paper-icon-button>
+                    <paper-icon-button icon="social:pan-tool" title="PendingRequests" on-click="onClick"></paper-icon-button>
+                </app-toolbar>
 
-        </app-header>
+            </app-header>
         </app-header-layout>
         hello world
         }
@@ -167,18 +168,30 @@
                 <div pagename="Tutors" >
                     <iron-list items="{{tutorList}}"as="item">
                         <template>
-                        <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
-                                     major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
-                                     relationship = [[item.relationship]] relstatus = [[item.relStatus]]
-                                     token = [[token]] email = [[email]]
-                                     invitation = [[item.invitation]]>
+                            <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
+                                         major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
+                                         relationship = [[item.relationship]] relstatus = [[item.relStatus]]
+                                         token = [[token]] email = [[email]]
+                                         invitation = [[item.invitation]]>
 
-                         </person-card>
+                            </person-card>
                         </template>
                     </iron-list>
                 </div>
                 <div pagename="Students" >
                     <iron-list items="{{studentList}}"as="item">
+                        <template>
+                            <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
+                                         major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
+                                         relationship = [[item.relationship]] relstatus = [[item.relStatus]]
+                                         token = [[token]] email = [[email]]
+                                         invitation = [[item.invitation]]>
+                            </person-card>
+                        </template>
+                    </iron-list>
+                </div>
+                <div pagename="PendingRequests" >
+                    <iron-list items="{{pendingList}}"as="item">
                         <template>
                             <person-card firstname= [[item.firstname]] lastname = [[item.lastname]] university= [[item.university]]
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
@@ -214,6 +227,7 @@ HTMLImports.whenReady(function() {
             courseList: Array,
             deleteCourseIndex: {type: Number, observer: "deleteCourseIndexObserver"},
             mypic: String,
+            pendingList: Array,
 
         },
 
@@ -226,6 +240,7 @@ HTMLImports.whenReady(function() {
               this.token = "";
               this.tutorList = [];
               this.studentList = [];
+              this.pendingList = [];
               this.searchInput = "";
               this.searchResults = null;
               this.courseList = [{"name" : "", "description": ""}];
@@ -289,6 +304,7 @@ HTMLImports.whenReady(function() {
             this.getProfile();
             this.getStudents();
             this.getTutors();
+            this.getPending();
 
         },  // end of handleSignIn() function
 
@@ -413,6 +429,30 @@ HTMLImports.whenReady(function() {
            req1.send();
            console.log("request sent");
 
+        },
+
+        getPending(){
+            var u1 = this.localUrl + "/PendingRequests";
+            if(u1.includes("local")){
+                u1 = u1 + "?email=" + this.email;
+           }
+           var req1 = new XMLHttpRequest();
+           req1.open('GET',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           req1.parent_element = this;
+
+            req1.onreadystatechange = function(){
+                console.log("request status changed");
+               if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                    var penders = JSON.parse(this.responseText);
+                    console.log("request done");
+                    if (penders)
+                      this.parent_element.pendingList = penders;
+               }
+           }
+           req1.send();
+           console.log("request sent");
         },
   });// end polymer function
 });

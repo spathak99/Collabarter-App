@@ -8,7 +8,6 @@
 <dom-module id="person-card">
     <template>
         <style is="custom-style">
-
         </style>
         <content>
             <paper-card class="custom-card">
@@ -21,7 +20,7 @@
                         [[firstname]] [[lastname]]
                     </paper-card>
                     <template is="dom-if" if="[[showConnect]]">
-                    <paper-button id="connectBtn" on-click="onClickConnect">Connect</paper-button>
+                        <paper-button id="connectBtn" on-click="onClickConnect">Connect</paper-button>
                     </template>
                     <template is="dom-if" if="[[showAcceptReject]]">
                         <paper-button id="acceptBtn" on-click="onClickAccept">Accept</paper-button>
@@ -91,16 +90,12 @@
             initialize: function(){
             },
             ready: function(){
-
             },
-
-
             personEmailObserver: function(){
                 if(this.personemail == null){
                     return;
                 }
                 var u1 =  "http://picasaweb.google.com/data/entry/api/user/" + this.personemail + "?alt=json";
-
                 var req1 = new XMLHttpRequest();
                 req1.open('GET',u1,true);
                // req1.setRequestHeader("Authorization" , "Bearer " + this.token);
@@ -114,7 +109,6 @@
                     }
                 }
                 req1.send();
-
             },
             decideAction: function(){
                  if((this.relstatus == null) || (this.invitation == null)){return;}
@@ -134,14 +128,11 @@
                  }else{//You are connected
                      rem = true;
                   }
-
                  this.showAcceptReject = ar;
                  this.showConnect = con;
                  this.showCancel = can;
                  this.showRemove = rem;
             },
-
-
             onClickConnect: function(e){
                var u1 = this.localUrl + "/Connection";
                var req1 = new XMLHttpRequest();
@@ -150,9 +141,7 @@
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.send(JSON.stringify(con));
-
             },
-
             onClickAccept: function(e){
                var u1 = this.localUrl + "/ApproveInvitation";
                var req1 = new XMLHttpRequest();
@@ -162,7 +151,6 @@
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.send(JSON.stringify(con));
             },
-
             onClickReject: function(e){
                var u1 = this.localUrl + "/RejectInvitation";
                var req1 = new XMLHttpRequest();
@@ -172,33 +160,26 @@
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.send(JSON.stringify(con));
             },
-
             onClickCancel: function(e){
                console.log("Cancelling");
                this.removeConnection();
-
             },
-
             onClickRemove: function(e){
                console.log("Removing");
                this.removeConnection();
             },
-
             relationshipObserver: function(){
                 if(this.relationship == "BOTH"){this.isTutor = true; this.isStudent = true;}
                 else if(this.relationship == "STUDENT"){this.isTutor = false; this.isStudent = true;}
                 else if(this.relationship == "TUTOR"){this.isTutor = true; this.isStudent = false;}
                 else{this.isTutor = false; this.isStudent = false;}
             },
-
             relStatusObserver: function(){
                 this.decideAction();
             },
-
             invObserver: function(){
                 this.decideAction();
             },
-
            getRelationship: function(){
                 var rel;
                 if (this.isTutor && this.isStudent){rel = "BOTH";}
@@ -217,11 +198,8 @@
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.setRequestHeader("Content-Type", "application/json");
-
                req1.send(JSON.stringify(con));
-
             },
-
             removeConnection: function(){
                var u1 = this.localUrl + "/RemoveConnection";
                var req1 = new XMLHttpRequest();
@@ -230,11 +208,8 @@
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.setRequestHeader("Content-Type", "application/json");
-
                req1.send(JSON.stringify(con));
             },
-
         });
     </script>
 </dom-module>
-
