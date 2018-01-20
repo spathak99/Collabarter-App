@@ -79,14 +79,12 @@ class Course(ndb.Model):
      email = ndb.StringProperty()
      name = ndb.StringProperty()
      description = ndb.StringProperty()
-     @classmethod
      def _post_put_hook(self, future):
           fields=[search.TextField(name='name', value=self.name),
                   search.TextField(name='description', value=self.description),
                   search.TextField(name='email', value=self.email)
           ]
-          print eval(self.key)
-          doc = search.Document(doc_id=eval(self.key), fields=fields)
+          doc = search.Document(doc_id=str(self.key.id()), fields=fields)
           index = search.Index('Course')
           index.put(doc)
 
