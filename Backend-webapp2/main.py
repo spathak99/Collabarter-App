@@ -567,6 +567,8 @@ class PendingHandler(webapp2.RequestHandler):
             p['relStatus'] = relStatus
             p['email'] = c.me
             inv = True
+            p['courseList'] = getCourseList(c.me)
+
             p['invitation'] = inv
             p['relationship'] = rel
             profiles.append(p)
