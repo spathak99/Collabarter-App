@@ -164,7 +164,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]] on-refresh="refreshPages">
 
                             </person-card>
                         </template>
@@ -177,7 +177,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]  on-refresh="refreshPages">
 
                             </person-card>
                         </template>
@@ -190,7 +190,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]  on-refresh="refreshPages">
                             </person-card>
                         </template>
                     </iron-list>
@@ -202,7 +202,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]  on-refresh="refreshPages">
                             </person-card>
                         </template>
                     </iron-list>
@@ -256,6 +256,19 @@ HTMLImports.whenReady(function() {
 
         },
 
+        refreshPages:function(){
+            if(this.token){
+                if(this.searchInput){
+                    this.doSearch();
+                }
+
+                this.getCourses();
+                this.getStudents();
+                this.getTutors();
+                this.getPending();
+            }
+
+        },
 
         handleError: function(event, request) {
             var re = event.detail.request.xhr.response;
@@ -273,6 +286,10 @@ HTMLImports.whenReady(function() {
             this.putCourses();
         },
         searchClick: function(e){
+          this.doSearch();
+        },
+
+        doSearch: function(){
            var u1 = this.localUrl + "/Search";
            if(u1.includes("local")){
                 u1 = u1 + "?email=" + this.email;
@@ -290,9 +307,6 @@ HTMLImports.whenReady(function() {
                }
            }
            req1.send(JSON.stringify(sj));
-
-
-
         },
         handleSignIn: function (response) {
             console.log("signedIn");

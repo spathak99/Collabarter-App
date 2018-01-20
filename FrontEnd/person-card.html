@@ -168,6 +168,14 @@
                con = {"email": this.email,"person": this.personemail,"message": "Please Connect with me"};
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+               req1.parent_element = this;
+               req1.onreadystatechange = function(){
+                    console.log("request status changed");
+                    if(req1.readyState == XMLHttpRequest.DONE){
+                        this.parent_element.dispatchEvent(new CustomEvent('refresh',{}));
+
+                    }
+                }
                req1.send(JSON.stringify(con));
             },
             onClickAccept: function(e){
@@ -177,6 +185,14 @@
                con = {"email": this.email,"person": this.personemail};
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+               req1.parent_element = this;
+               req1.onreadystatechange = function(){
+                    console.log("request status changed");
+                    if(req1.readyState == XMLHttpRequest.DONE){
+                        this.parent_element.dispatchEvent(new CustomEvent('refresh',{}));
+
+                    }
+                }
                req1.send(JSON.stringify(con));
             },
             onClickReject: function(e){
@@ -186,11 +202,20 @@
                con = {"email": this.email,"person": this.personemail};
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+               req1.parent_element = this;
+               req1.onreadystatechange = function(){
+                    console.log("request status changed");
+                    if(req1.readyState == XMLHttpRequest.DONE){
+                        this.parent_element.dispatchEvent(new CustomEvent('refresh',{}));
+
+                    }
+                }
                req1.send(JSON.stringify(con));
             },
             onClickCancel: function(e){
                console.log("Cancelling");
                this.removeConnection();
+
             },
             onClickRemove: function(e){
                console.log("Removing");
@@ -236,6 +261,14 @@
                req1.open('POST',u1,true);
                req1.setRequestHeader("Authorization" , "Bearer " + this.token);
                req1.setRequestHeader("Content-Type", "application/json");
+               req1.parent_element = this;
+               req1.onreadystatechange = function(){
+                    console.log("request status changed");
+                    if(req1.readyState == XMLHttpRequest.DONE){
+                        this.parent_element.dispatchEvent(new CustomEvent('refresh',{}));
+
+                    }
+                }
                req1.send(JSON.stringify(con));
             },
         });
