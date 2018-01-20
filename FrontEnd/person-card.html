@@ -2,6 +2,7 @@
 <link rel="import" href="bower_components/paper-card/paper-card.html">
 <link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-list/iron-list.html">
 
 <style is="custom-style">
     html, body {
@@ -71,6 +72,20 @@
                         [[gpa]]
                     </paper-card>
                 </div>
+                <div>
+                    <iron-list items="[[courselist]]" as="item">
+                        <template>
+                            <div>
+                                <paper-card>
+                                    [[item.name]]: [[item.description]]
+                                </paper-card>
+
+                            </div>
+
+
+                        </template>
+                    </iron-list>
+                </div>
             </paper-card>
         </content>
     </template>
@@ -95,6 +110,7 @@
                 showRemove: Boolean,
                 isTutor: Boolean,
                 isStudent: Boolean,
+                courseList: Array,
                 invitation: {type: String, observer: "invObserver"},
                 localUrl: {type: String, value: "http://localhost:8080"},
                 backendUrl: {type: String, value: "https://backend-dot-collabarter-188623.appspot.com"},

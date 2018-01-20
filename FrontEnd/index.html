@@ -10,6 +10,7 @@
     <link rel="import" href="bower_components/app-layout/app-layout.html">
 
     <link rel="import" href="bower_components/iron-pages/iron-pages.html">
+    <link rel="import" href="bower_components/paper-card/paper-card.html">
 
     <link rel="import" href="bower_components/polymer/polymer.html">
     <link rel="import" href="bower_components/iron-image/iron-image.html">
@@ -147,7 +148,7 @@
                         </template>
                     </iron-list>
                     <paper-icon-button icon="add" raised on-click="addCourse"></paper-icon-button>
-
+                    <paper-card>Add a Course</paper-card>
 
                     <paper-button on-click="onClickSaveProf">Save</paper-button>
 
@@ -163,7 +164,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
 
                             </person-card>
                         </template>
@@ -176,7 +177,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
 
                             </person-card>
                         </template>
@@ -189,7 +190,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
                             </person-card>
                         </template>
                     </iron-list>
@@ -201,7 +202,7 @@
                                          major = [[item.major]] gpa = [[item.gpa]] personemail = [[item.email]]
                                          relationship = [[item.relationship]] relstatus = [[item.relStatus]]
                                          token = [[token]] email = [[email]]
-                                         invitation = [[item.invitation]]>
+                                         invitation = [[item.invitation]] courselist = [[item.courseList]]>
                             </person-card>
                         </template>
                     </iron-list>

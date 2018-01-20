@@ -55,6 +55,12 @@ def getEmail(rd=None):
         email = None
     return email
 
+def getCourseList(email):
+    q1 = Course.query(Course.email == email)
+    ans = []
+    for c in q1:
+        ans.append(c.to_dict())
+    return ans
 
 class ConnectionUtil(object):
     def to_dict(self):
@@ -201,6 +207,7 @@ class StudentsHandler(webapp2.RequestHandler):
             p = prof.to_dict()
             p['relStatus'] = relStatus
             p['invitation'] = True
+            p['courseList'] = getCourseList(c.person)
             p['email'] = c.person
             p['relationship'] = rel
             profiles.append(p)
@@ -215,7 +222,7 @@ class StudentsHandler(webapp2.RequestHandler):
                 rel = 'STUDENT'
             p = prof.to_dict()
             p['invitation'] = True
-
+            p['courseList'] = getCourseList(c.me)
             p['relStatus'] = relStatus
             p['email'] = c.me
             p['relationship'] = rel
@@ -252,6 +259,7 @@ class TutorsHandler(webapp2.RequestHandler):
             p['email'] = c.person
             p['relationship'] = rel
             p['invitation'] = True
+            p['courseList'] = getCourseList(c.person)
 
             profiles.append(p)
 
@@ -266,6 +274,7 @@ class TutorsHandler(webapp2.RequestHandler):
             p = prof.to_dict()
             p['relStatus'] = relStatus
             p['invitation'] = True
+            p['courseList'] = getCourseList(c.me)
             p['email'] = c.me
             p['relationship'] = rel
             profiles.append(p)
@@ -322,6 +331,7 @@ class SearchHandler(webapp2.RequestHandler):
                    inv = getInvitation(myEmail,personEmail)
                    p['invitation'] = inv
                    p['relationship'] = rel
+                   p['courseList'] = getCourseList(personEmail)
                    profiles.append(p)
 
           #index = search.Index('Course')
@@ -373,15 +383,9 @@ class CoursesHandler(webapp2.RequestHandler):
               self.response.write(json.dumps(msg))
               return
 
-          q1 = Course.query(Course.email == email)
-
-          ans = []
-          for c in q1:
-               ans.append(c.to_dict())
-
-          print ans
+          cl = getCourseList(email)
           self.response.headers['Content-Type'] = 'application/json'
-          self.response.write(json.dumps(ans))
+          self.response.write(json.dumps(cl))
 
      def options(self):
           self.response.headers['Access-Control-Allow-Origin'] = '*'
