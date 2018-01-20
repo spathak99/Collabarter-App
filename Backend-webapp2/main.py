@@ -196,6 +196,7 @@ class StudentsHandler(webapp2.RequestHandler):
             rel = c.relationship
             p = prof.to_dict()
             p['relStatus'] = relStatus
+            p['invitation'] = True
             p['email'] = c.person
             p['relationship'] = rel
             profiles.append(p)
@@ -209,6 +210,8 @@ class StudentsHandler(webapp2.RequestHandler):
             if(rel == 'TUTOR'):
                 rel = 'STUDENT'
             p = prof.to_dict()
+            p['invitation'] = True
+
             p['relStatus'] = relStatus
             p['email'] = c.me
             p['relationship'] = rel
@@ -244,6 +247,8 @@ class TutorsHandler(webapp2.RequestHandler):
             p['relStatus'] = relStatus
             p['email'] = c.person
             p['relationship'] = rel
+            p['invitation'] = True
+
             profiles.append(p)
 
         q2 = Connection.query(ndb.AND(Connection.person == email), (Connection.relationship.IN(['STUDENT', 'BOTH'])))
@@ -256,6 +261,7 @@ class TutorsHandler(webapp2.RequestHandler):
                 rel = 'TUTOR'
             p = prof.to_dict()
             p['relStatus'] = relStatus
+            p['invitation'] = True
             p['email'] = c.me
             p['relationship'] = rel
             profiles.append(p)
@@ -535,19 +541,21 @@ class PendingHandler(webapp2.RequestHandler):
         email = getEmail(self.request)
         if (email == None):
             return
-        q1 = Connection.query(ndb.AND(Connection.me == email), (Connection.status == "PENDING"))
+        q1 = Connection.query(ndb.AND(Connection.person == email), (Connection.status == "PENDING"))
 
         ans = []
         profiles = []
         for c in q1:
-            prof = Profile.get_by_id(c.person)
+            prof = Profile.get_by_id(c.me)
             print "In first loop"
 
             relStatus = c.status
             rel = c.relationship
             p = prof.to_dict()
             p['relStatus'] = relStatus
-            p['email'] = c.person
+            p['email'] = c.me
+            inv = True
+            p['invitation'] = inv
             p['relationship'] = rel
             profiles.append(p)
 
