@@ -14,8 +14,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="649">
-              <caret line="213" column="0" lean-forward="true" selection-start-line="213" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
+            <state relative-caret-position="460">
+              <caret line="358" column="24" lean-forward="false" selection-start-line="358" selection-start-column="21" selection-end-line="358" selection-end-column="24" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -62,7 +62,6 @@
       <find>email</find>
       <find>inv</find>
       <find>getrelat</find>
-      <find>ndb</find>
       <find>pubsub</find>
       <find>request</find>
       <find>auth</find>
@@ -71,6 +70,9 @@
       <find>credentials</find>
       <find>pendinghandler</find>
       <find>tutorshandler</find>
+      <find>courseshandler</find>
+      <find>ndb</find>
+      <find>cou</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -172,7 +174,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -390,8 +392,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="649">
-          <caret line="213" column="0" lean-forward="true" selection-start-line="213" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
+        <state relative-caret-position="460">
+          <caret line="358" column="24" lean-forward="false" selection-start-line="358" selection-start-column="21" selection-end-line="358" selection-end-column="24" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>

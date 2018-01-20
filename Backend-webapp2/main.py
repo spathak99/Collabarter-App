@@ -29,6 +29,10 @@ def getConnection(myEmail,personEmail):
 #Relationship: student, tutor, both
 #Status: NOT CONNECTED, PENDING, APPROVED
 
+def deleteCourses(email):
+    q1 = Course.query(Course.email == email)
+    for c in q1:
+        c.key.delete()
 
 def getInvitation(myEmail,personEmail):
     inv = "NOT CONNECTED"
@@ -337,13 +341,17 @@ class SearchHandler(webapp2.RequestHandler):
 
 class CoursesHandler(webapp2.RequestHandler):
      def post(self):
+          self.response.headers.add_header('Access-Control-Allow-Origin', '*')
+
           data = self.request.body
           email = getEmail(json.loads(self.request.body))
           if(email == None):
               msg = "invalid user"
               self.response.write(json.dumps(msg))
               return
-          courses = json.loads(data)
+          deleteCourses(email)
+          j = json.loads(data)
+          courses = j['courselist']
           ents = []
           l = len(courses)
           for i in range(0,l):
@@ -358,13 +366,12 @@ class CoursesHandler(webapp2.RequestHandler):
           self.response.write(data)
 
      def get(self):
-
+          self.response.headers.add_header('Access-Control-Allow-Origin', '*')
           email = getEmail(self.request)
           if (email == None):
+              msg = "invalid user"
+              self.response.write(json.dumps(msg))
               return
-          user = oauth.get_current_user()
-          if user:
-               print 'Hello ' + user.nickname()
 
           q1 = Course.query(Course.email == email)
 
@@ -376,7 +383,10 @@ class CoursesHandler(webapp2.RequestHandler):
           self.response.headers['Content-Type'] = 'application/json'
           self.response.write(json.dumps(ans))
 
-
+     def options(self):
+          self.response.headers['Access-Control-Allow-Origin'] = '*'
+          self.response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin,  X-Requested-With, X-Auth-Token, Content-Type, Accept'
+          self.response.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE'
 
 
 class ProfileHandler(webapp2.RequestHandler):

@@ -269,6 +269,7 @@ HTMLImports.whenReady(function() {
         },
         onClickSaveProf: function(e){
             this.putProfile();
+            this.putCourses();
         },
         searchClick: function(e){
            var u1 = this.localUrl + "/Search";
@@ -305,11 +306,13 @@ HTMLImports.whenReady(function() {
             console.log(this.email);
             console.log(this.token);
             this.getProfile();
+            this.getCourses();
             this.getStudents();
             this.getTutors();
             this.getPending();
 
         },  // end of handleSignIn() function
+
 
 
 
@@ -383,6 +386,41 @@ HTMLImports.whenReady(function() {
            req1.send(JSON.stringify(this.profile));
         },
 
+
+        getCourses(){
+         var u1 = this.localUrl + "/Courses";
+           if(u1.includes("local")){
+                u1 = u1 + "?email=" + this.email;
+           }
+           var req1 = new XMLHttpRequest();
+           req1.open('GET',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           req1.parent_element = this;
+
+           req1.onreadystatechange = function(){
+                console.log("request status changed");
+               if(req1.readyState == XMLHttpRequest.DONE && req1.responseText != ""){
+                    var courses = JSON.parse(this.responseText);
+                    console.log("request done");
+                    if (courses)
+                      this.parent_element.courseList = courses;
+               }
+           }
+           req1.send();
+           console.log("request sent");
+        },
+
+        putCourses(){
+           var u1 = this.localUrl + "/Courses";
+           var courses = {"email": this.email,"courselist": this.courseList};
+           var req1 = new XMLHttpRequest();
+           req1.open('POST',u1,true);
+           req1.setRequestHeader("Authorization" , "Bearer " + this.token);
+           req1.setRequestHeader("Content-Type", "application/json");
+           console.log(courses);
+           req1.send(JSON.stringify(courses));
+        },
         getStudents(){
             var u1 = this.localUrl + "/Students";
             if(u1.includes("local")){
