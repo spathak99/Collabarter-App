@@ -229,7 +229,6 @@ HTMLImports.whenReady(function() {
             searchInput: String,
             searchResults: Object,
             courseList: Array,
-            deleteCourseIndex: {type: Number, observer: "deleteCourseIndexObserver"},
             mypic: String,
             pendingList: Array,
 
@@ -313,23 +312,21 @@ HTMLImports.whenReady(function() {
         },  // end of handleSignIn() function
 
 
-        deleteCourseIndexObserver: function(newValue,oldValue){
-            var cl = this.courseList;
-             var cl2 = [];
-             for(var i = 0; i < cl.length; i++){
-                   if(i != newValue){
-                     cl2.push(cl[i]);
-                   }
-             }
-             this.courselist = null;
-             this.courselist = cl2;
-        },
+
 
         deleteCourse: function(e){
             var btn = e.target;
             var id = btn.getAttribute("id");
             var index = parseInt(id);
-            this.deleteCourseIndex = index;
+             var cl = this.courseList;
+             var cl2 = [];
+             for(var i = 0; i < cl.length; i++){
+                   if(i != index){
+                     cl2.push(cl[i]);
+                   }
+             }
+             this.courseList = null;
+             this.courseList = cl2;
         },
         addCourse: function(e){
              var course = {"name" : "", "description": ""};
