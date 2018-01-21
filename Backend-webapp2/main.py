@@ -304,6 +304,7 @@ class SearchHandler(webapp2.RequestHandler):
           index = search.Index('Profile')
           results = index.search(query)
           profiles = []
+          emailList = []
           for r in results:
                prof = Profile.get_by_id(r.doc_id)
                if (prof):
@@ -331,12 +332,49 @@ class SearchHandler(webapp2.RequestHandler):
                    p['relationship'] = rel
                    p['courseList'] = getCourseList(personEmail)
                    profiles.append(p)
+                   emailList.append(personEmail)
+
+
 
           #index = search.Index('Course')
           #results = index.search(query)
           #for r in results:
                #ans.append(r.doc_id)
+          query = search.Query(query_string=query_string, options=query_options)
+          print "Doing query"
+          index = search.Index('Course')
+          results = index.search(query)
+          for r in results:
+              print "inside course search"
+              id = long(r.doc_id)
+              course = Course.get_by_id(id)
+              if(course):
+                  if(course.email != myEmail):
+                      if(course.email not in emailList):
 
+                          print course.email
+                          prof = Profile.get_by_id(course.email)
+                          p = prof.to_dict()
+                          con = getConnection(myEmail, course.email)
+                          if (con):
+                              relStatus = con.status
+                              rel = con.relationship
+                              if (con.me != myEmail):
+                                  print "Swapping rels.."
+                                  if (rel == "STUDENT"):
+                                      print "swapping from student..."
+                                      rel = "TUTOR"
+                                  elif (rel == "TUTOR"):
+                                      print "swapping from tutor..."
+                                      rel = "STUDENT"
+
+                          p['relStatus'] = relStatus
+                          p['email'] =  course.email
+                          inv = getInvitation(myEmail, course.email)
+                          p['invitation'] = inv
+                          p['relationship'] = rel
+                          p['courseList'] = getCourseList( course.email)
+                          profiles.append(p)
 
           self.response.headers['Content-Type'] = 'application/json'
           self.response.write(json.dumps(profiles))
