@@ -51,6 +51,7 @@
     }
     app-toolbar {
       background-color:#009688;
+      background-image: linear-gradient(to right,#00796B,#00897B,#009688,#26A69A,#4DB6AC,#80CBC4);
       color: #fff;
     }
 
@@ -82,10 +83,25 @@
     sample-content {
       padding-top: 64px;
     }
+
+    paper-input.coursename{
+        width: 20%;
+    }
+
+    paper-input.coursedescription{
+      width: 75%;
+
+    }
+
+
+    .maindiv{
+       padding-top: 60px;
+    }
+
+
   </style>
         </custom-style>
         <app-header-layout>
-            hello world3
             <app-header>
                 <app-toolbar>
                     <google-signin
@@ -94,7 +110,7 @@
                             on-google-signin-success="handleSignIn"
                             on-google-signed-out="handleSignedOut"
                             scopes="profile https://www.googleapis.com/auth/userinfo.email"></google-signin>
-                    Collabarter
+                    <paper-item>Collabarter</paper-item>
                     <paper-icon-button src=[[mypic]] title="Profile" on-click="onClick"></paper-icon-button>
                     <paper-icon-button icon="search" title="Search" on-click="onClick"></paper-icon-button>
                     <paper-icon-button icon="social:school" title="Tutors" on-click="onClick"></paper-icon-button>
@@ -104,14 +120,8 @@
 
             </app-header>
         </app-header-layout>
-        hello world
-        }
-        app-drawer {
-        --app-drawer-scrim-background: rgba(0, 0, 100, 0.8);
-        --app-drawer-content-container: {
-        background-color: #B0BEC5;
-        <div>
-            hello world 2
+
+        <div class="maindiv">
             <iron-pages selected={{selectedPage}} attr-for-selected="pagename">
                 <div pagename="Profile" >
                     <paper-input label="First Name" value = {{profile.firstname}}>
@@ -138,17 +148,16 @@
                     <iron-list id="listone" items="{{courseList}}" as="course">
                         <template>
                             <div style= "overflow:auto;">
-                                <paper-input width = "25%" label="Course Name"  value={{course.name}}>
+                                <paper-input  width = "25%" label="Course Name"  value={{course.name}}>
                                 </paper-input>
-                                <paper-input label="Course Description"  value={{course.description}}>
+                                <paper-input  label="Course Description"  value={{course.description}}>
                                 </paper-input>
                                 <paper-icon-button icon="delete"  id="{{index}}"  raised on-click="deleteCourse"></paper-icon-button>
 
                             </div>
                         </template>
                     </iron-list>
-                    <paper-icon-button icon="add" raised on-click="addCourse"></paper-icon-button>
-                    <paper-card>Add a Course</paper-card>
+                    <paper-icon-button icon="add" title="Add a Course" raised on-click="addCourse"></paper-icon-button>
 
                     <paper-button on-click="onClickSaveProf">Save</paper-button>
 
@@ -290,6 +299,9 @@ HTMLImports.whenReady(function() {
         },
 
         doSearch: function(){
+           if(this.searchInput == ""){
+                return;
+           }
            var u1 = this.localUrl + "/Search";
            if(u1.includes("local")){
                 u1 = u1 + "?email=" + this.email;

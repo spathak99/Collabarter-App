@@ -4,48 +4,53 @@
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="bower_components/iron-list/iron-list.html">
 
-<style is="custom-style">
-    html, body {
-      margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      background: #f1f1f1;
-      max-height: 368px;
-    }
-    person-card {
 
-    }
-
-  </style>
 
 <dom-module id="person-card">
     <template>
         <style is="custom-style">
+            .custom-card{
+                width: 40%;
+                margin-bottom:12px;
+                background-color: #ffffff;
+            };
+            .card-header{
+                background-color:   #673AB7;
+                background-image: linear-gradient(to right,#9575CD, #7E57C2, #673AB7, #5E35B1, #512DA8, #4527A0);
+
+                color: white;
+            };
+            .card-pic{
+              background-color: white;
+              margin-left: 4px;
+              margin-right: 4px;
+              margin-top: 4px;
+              margin-bottom: 4px;
+            };
+            hr{
+               border: 0;
+                height: 2px;
+                background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+            };
         </style>
         <content>
             <paper-card class="custom-card">
-                <div>
-                    <paper-card  image= "[[mypic]]"></paper-card>
-                </div>
-                <div>
-                    <iron-icon icon="account-circle" slot="prefix"></iron-icon>
-                    <paper-card id="" class="cyan">
+                <div class="card-header">
+                   <paper-card class="card-pic"  image= "[[mypic]]"></paper-card>
                         [[firstname]] [[lastname]]
-                    </paper-card>
-                    <template is="dom-if" if="[[showConnect]]">
-                        <paper-button id="connectBtn" on-click="onClickConnect">Connect</paper-button>
-                    </template>
-                    <template is="dom-if" if="[[showAcceptReject]]">
-                        <paper-button id="acceptBtn" on-click="onClickAccept">Accept</paper-button>
-                        <paper-button id="rejectBtn" on-click="onClickReject">Reject</paper-button>
-                    </template>
-                    <template is="dom-if" if="[[showCancel]]">
-                        <paper-button id="cancelBtn" on-click="onClickCancel">Cancel Request</paper-button>
-                    </template>
-                    <template is="dom-if" if="[[showRemove]]">
-                        <paper-button id="removeBtn" on-click="onClickRemove">Remove Connection</paper-button>
-                    </template>
-
+                        <template is="dom-if" if="[[showConnect]]">
+                            <paper-button id="connectBtn" raised on-click="onClickConnect">Connect</paper-button>
+                        </template>
+                        <template is="dom-if" if="[[showAcceptReject]]">
+                            <paper-button id="acceptBtn" on-click="onClickAccept">Accept</paper-button>
+                            <paper-button id="rejectBtn" on-click="onClickReject">Reject</paper-button>
+                        </template>
+                        <template is="dom-if" if="[[showCancel]]">
+                            <paper-button id="cancelBtn" on-click="onClickCancel">Cancel Request</paper-button>
+                        </template>
+                        <template is="dom-if" if="[[showRemove]]">
+                            <paper-button id="removeBtn" on-click="onClickRemove">Remove Connection</paper-button>
+                        </template>
 
                 </div>
                 <div>
@@ -56,36 +61,25 @@
                 </div>
                 <div>
                     <iron-icon icon="social:domain" slot="prefix"></iron-icon>
-                    <paper-card class="cyan">
                         [[university]]
-                    </paper-card>
-                </div>
-                <div>
+
                     <iron-icon icon="social:school" slot="prefix"></iron-icon>
-                    <paper-card class="cyan">
-                        [[major]]
-                    </paper-card>
+                    [[major]]
+
+                    <iron-icon icon="grade" slot="prefix"></iron-icon>
+                    [[gpa]]
                 </div>
-                <div>
-                    <iron-icon icon="book" slot="prefix"></iron-icon>
-                    <paper-card class="cyan">
-                        [[gpa]]
-                    </paper-card>
-                </div>
+                    <hr>
                 <div>
                     <iron-list items="[[courselist]]" as="item">
                         <template>
                             <div>
-                                <paper-card>
                                     [[item.name]]: [[item.description]]
-                                </paper-card>
-
                             </div>
-
-
                         </template>
                     </iron-list>
                 </div>
+
             </paper-card>
         </content>
     </template>
